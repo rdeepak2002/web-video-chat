@@ -63,9 +63,9 @@ sudo chown -R $USER /usr/local/bin/
 sudo chown -R $USER /usr/local/share/
 ```
 
-## Part 00 - Project Setup
+## Part 00 - Project Setup (https://youtu.be/UdC2CUp6if8)
 
-Note: for Windows, use 'dir' instead of 'ls'
+Note: for Windows, use 'dir' instead of 'ls', and 'rd /s /q' instead of 'rm -rf'
 
 How to setup the skeleton for the project:
 
