@@ -69,7 +69,7 @@ sudo chown -R $USER /usr/local/share/
 
 ## Part 00 - Project Setup (https://youtu.be/UdC2CUp6if8)
 
-Goal: Create the skeleton for this project and push the code to GitHub
+Goal: Create the skeleton for this project (folder for server code and folder for website code) and push the code to GitHub
 
 Video: https://youtu.be/UdC2CUp6if8
 
