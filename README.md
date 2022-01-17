@@ -94,7 +94,7 @@ npm init -y
 cd ..
 
 # then, we will create the web application
-npx create-react-app web-app
+npx create-react-app web-app -y
 cd web-app
 # remove current git repo inside
 rm -rf .git
