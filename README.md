@@ -25,7 +25,7 @@ List of terminal commands for macOS / Linux:
 ## Software Required (Windows)
 - Install Node.js: https://nodejs.org/en/download/
 - IDE (install one of the following):
-  - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
+  - Recommended: https://www.jetbrains.com/webstorm/download/#section=windows
     - Apply for a free license for students using this link: https://www.jetbrains.com/community/education/#students
   - Other: https://code.visualstudio.com/
 - Install git on Windows: https://git-scm.com/download/win
@@ -33,7 +33,7 @@ List of terminal commands for macOS / Linux:
 ## Software Required (Linux)
 - Install Node.js: https://nodejs.org/en/download/
 - IDE (install one of the following):
-  - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
+  - Recommended: https://www.jetbrains.com/webstorm/download/#section=linux
     - Apply for a free license for students using this link: https://www.jetbrains.com/community/education/#students
   - Other: https://code.visualstudio.com/
 - Run the following command in your terminal application to install git on Linux:
