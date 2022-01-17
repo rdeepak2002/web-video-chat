@@ -94,7 +94,7 @@ npm init -y
 cd ..
 
 # then, we will create the web application
-npx create-react-app web-app
+npx create-react-app web-app -y
 cd web-app
 # optional: running 'npm start' will make the web app run
 # press 'control + c' in your terminal application to terminate the process
