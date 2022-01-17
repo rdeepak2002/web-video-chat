@@ -10,14 +10,14 @@ Deepak Ramalingam
 
 ## Prerequisites (windows)
 
-Before following this tutorial, please understand how to use the 'dir', 'cd', and 'mkdir' commands in your terminal application.
+Before following this tutorial, please understand how to use the 'dir', 'cd', 'rmdir', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for Windows:
 - https://www.thomas-krenn.com/en/wiki/Cmd_commands_under_Windows
 
 ## Prerequisites (macOS / linux)
 
-Before following this tutorial, please understand how to use the 'ls', 'cd', and 'mkdir' commands in your terminal application.
+Before following this tutorial, please understand how to use the 'ls', 'cd', 'rm', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for macOS / Linux:
 - https://dev.to/kymiddleton/reference-guide-common-commands-for-terminal-6no
@@ -96,6 +96,8 @@ cd ..
 # then, we will create the web application
 npx create-react-app web-app
 cd web-app
+# remove current git repo inside
+rm -rf .git
 # optional: running 'npm start' will make the web app run
 # press 'control + c' in your terminal application to terminate the process
 npm start
