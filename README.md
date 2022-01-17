@@ -8,21 +8,65 @@ Tutorial on how to create a Zoom 'clone' in the web
 
 Deepak Ramalingam
 
-## Prerequisites
+## Prerequisites (windows)
 
-Before following this tutorial, please use the below resources to understand how to use the terminal application for your computer.
-
-Knowing the 'ls' and 'cd' commands on macOs / Linux or 'dir' and 'cd' commands on Windows is sufficient for this tutorial.
-
-List of terminal commands for macOs / Linux:
-- https://dev.to/kymiddleton/reference-guide-common-commands-for-terminal-6no
+Before following this tutorial, please understand how to use the 'dir' and 'cd' commands in your terminal application.
 
 List of terminal commands for Windows:
 - https://www.thomas-krenn.com/en/wiki/Cmd_commands_under_Windows
 
-How to use the terminal on macOS:
-- https://support.apple.com/guide/terminal/open-or-quit-terminal-apd5265185d-f365-44cb-8b09-71a064a42125/mac
+## Prerequisites (macOS / linux)
 
-## Part 1 - Project Setup
+Before following this tutorial, please understand how to use the 'ls' and 'cd' commands in your terminal application.
 
-Have the following software installed on your computer:
+List of terminal commands for macOS / Linux:
+- https://dev.to/kymiddleton/reference-guide-common-commands-for-terminal-6no
+
+## Software Required (Windows)
+- Install Node.js: https://nodejs.org/en/download/
+- IDE (install one of the following):
+  - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
+    - Apply for a free license for students using this link: https://www.jetbrains.com/community/education/#students
+  - Other: https://code.visualstudio.com/
+- Install git on Windows: https://git-scm.com/download/win
+
+## Software Required (Linux)
+- Install Node.js: https://nodejs.org/en/download/
+- IDE (install one of the following):
+  - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
+    - Apply for a free license for students using this link: https://www.jetbrains.com/community/education/#students
+  - Other: https://code.visualstudio.com/
+- Run the following command in your terminal application to install git on Linux:
+```shell
+sudo apt-get update
+sudo apt install git-all
+```
+
+## Software Required (macOS)
+- Install Node.js: https://nodejs.org/en/download/
+- IDE (install one of the following):
+  - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
+    - Apply for a free license for students using this link: https://www.jetbrains.com/community/education/#students
+  - Other: https://code.visualstudio.com/
+- Run the following command in your terminal application to install git on macOS:
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install git
+```
+
+Run the following command in your terminal after installing Node.js on macOS:
+
+```shell
+sudo chown -R $USER /usr/local/lib/
+sudo chown -R $USER /usr/local/lib/node_modules/
+sudo chown -R $USER /usr/local/bin/
+sudo chown -R $USER /usr/local/share/
+```
+
+## Part 0 - Project Setup
+
+Here is how I setup the project:
+
+```shell
+
+```
