@@ -10,14 +10,14 @@ Deepak Ramalingam
 
 ## Prerequisites (windows)
 
-Before following this tutorial, please understand how to use the 'dir' and 'cd' commands in your terminal application.
+Before following this tutorial, please understand how to use the 'dir', 'cd', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for Windows:
 - https://www.thomas-krenn.com/en/wiki/Cmd_commands_under_Windows
 
 ## Prerequisites (macOS / linux)
 
-Before following this tutorial, please understand how to use the 'ls' and 'cd' commands in your terminal application.
+Before following this tutorial, please understand how to use the 'ls', 'cd', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for macOS / Linux:
 - https://dev.to/kymiddleton/reference-guide-common-commands-for-terminal-6no
@@ -63,10 +63,23 @@ sudo chown -R $USER /usr/local/bin/
 sudo chown -R $USER /usr/local/share/
 ```
 
-## Part 0 - Project Setup
+## Part 0 - Project Setup (macOS / Linux)
 
-Here is how I setup the project:
+How I setup the skeleton for the project:
 
 ```shell
+# I first created a new folder called 'Projects' in my 'Documents' folder
+ls                # 'ls' allows me to see where I am
+cd Documents
+mkdir Projects
+cd Projects
+
+# I then create another new folder called 'web-video-chat'
+mkdir web-video-chat
+cd web-video-chat
+
+# In here, we will create a folder called 'server' for all our Node.js server
+# And we will create another folder called 'web-app' for our React web application code
+
 
 ```
