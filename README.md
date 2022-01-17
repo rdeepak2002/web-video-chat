@@ -94,9 +94,40 @@ cd ..
 # then, we will create the web application
 npx create-react-app web-app
 cd web-app
-# optional, running 'npm start' will make the web app run
+# optional: running 'npm start' will make the web app run
 # press 'control + c' in your terminal application to terminate the process
 npm start
 
+# leave this folder
+cd ..
+```
 
+How to push this code to git:
+
+- Create an account at https://github.com/
+- Go to the 'Repositories' section and click 'New' / 'Create'
+  - Type in a name for the repository
+  - Click 'Create Repository'
+- Run the following terminal commands:
+
+```shell
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/[YOUR_USERNAME]/[REPO_NAME].git
+git push -u origin main
+```
+
+- If you are asked to login, type in your username and for the password, generate a new token using this link: https://github.com/settings/tokens/new
+  - Select all scopes
+  - Paste in the token string as your password
+
+How to push new code to git:
+
+```shell
+# in the root directory of your project, run the following terminal commands
+git add .
+git commit -m "some commit message"
+git push -u origin main
 ```
