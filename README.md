@@ -63,13 +63,15 @@ sudo chown -R $USER /usr/local/bin/
 sudo chown -R $USER /usr/local/share/
 ```
 
-## Part 0 - Project Setup (macOS / Linux)
+## Part 0 - Project Setup
+
+Note: for Windows, use 'dir' instead of 'ls'
 
 How to setup the skeleton for the project:
 
 ```shell
 # I first created a new folder called 'Projects' in my 'Documents' folder
-ls                # 'ls' allows me to see where I am
+ls                # 'ls' allows us to see where we are
 cd Documents
 mkdir Projects
 cd Projects
@@ -120,7 +122,7 @@ git push -u origin main
 ```
 
 - If you are asked to login, type in your username and for the password, generate a new token using this link: https://github.com/settings/tokens/new
-  - Select all scopes
+  - Select all the scopes
   - Paste in the token string as your password
 
 How to push new code to git:
