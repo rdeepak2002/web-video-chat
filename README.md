@@ -8,21 +8,25 @@ Tutorial on how to create a Zoom 'clone' in the web
 
 Deepak Ramalingam
 
-## Prerequisites (windows)
+## Prerequisites
+
+### Prerequisites (windows)
 
 Before following this tutorial, please understand how to use the 'dir', 'cd', 'rmdir', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for Windows:
 - https://www.thomas-krenn.com/en/wiki/Cmd_commands_under_Windows
 
-## Prerequisites (macOS / linux)
+### Prerequisites (macOS / linux)
 
 Before following this tutorial, please understand how to use the 'ls', 'cd', 'rm', and 'mkdir' commands in your terminal application.
 
 List of terminal commands for macOS / Linux:
 - https://dev.to/kymiddleton/reference-guide-common-commands-for-terminal-6no
 
-## Software Required (Windows)
+## Software Required
+
+### Software Required (Windows)
 - Install Node.js: https://nodejs.org/en/download/
 - IDE (install one of the following):
   - Recommended: https://www.jetbrains.com/webstorm/download/#section=windows
@@ -30,7 +34,7 @@ List of terminal commands for macOS / Linux:
   - Other: https://code.visualstudio.com/
 - Install git on Windows: https://git-scm.com/download/win
 
-## Software Required (Linux)
+### Software Required (Linux)
 - Install Node.js: https://nodejs.org/en/download/
 - IDE (install one of the following):
   - Recommended: https://www.jetbrains.com/webstorm/download/#section=linux
@@ -42,7 +46,7 @@ sudo apt-get update
 sudo apt install git-all
 ```
 
-## Software Required (macOS)
+### Software Required (macOS)
 - Install Node.js: https://nodejs.org/en/download/
 - IDE (install one of the following):
   - Recommended: https://www.jetbrains.com/webstorm/download/#section=mac
