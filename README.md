@@ -65,7 +65,7 @@ sudo chown -R $USER /usr/local/share/
 
 ## Part 0 - Project Setup (macOS / Linux)
 
-How I setup the skeleton for the project:
+How to setup the skeleton for the project:
 
 ```shell
 # I first created a new folder called 'Projects' in my 'Documents' folder
@@ -80,6 +80,23 @@ cd web-video-chat
 
 # In here, we will create a folder called 'server' for all our Node.js server
 # And we will create another folder called 'web-app' for our React web application code
+
+# first, we will create a blank npm project for the server application
+mkdir server
+cd server
+npm init -y
+# its good practice to add a '.gitignore' file so that git does not push folders like 'node_modules'
+# download this file and add it to this server folder: https://raw.githubusercontent.com/rdeepak2002/web-video-chat/main/server/.gitignore
+
+# leave this folder
+cd ..
+
+# then, we will create the web application
+npx create-react-app web-app
+cd web-app
+# optional, running 'npm start' will make the web app run
+# press 'control + c' in your terminal application to terminate the process
+npm start
 
 
 ```
