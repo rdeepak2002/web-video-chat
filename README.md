@@ -63,7 +63,7 @@ sudo chown -R $USER /usr/local/bin/
 sudo chown -R $USER /usr/local/share/
 ```
 
-## Part 0 - Project Setup
+## Part 00 - Project Setup
 
 Note: for Windows, use 'dir' instead of 'ls'
 
