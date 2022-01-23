@@ -143,3 +143,14 @@ git add .
 git commit -m "some commit message"
 git push -u origin main
 ```
+
+# Part 01 - Prototype and Frontend Setup
+
+Create a rough mockup of your web app in Figma (https://www.figma.com/)
+
+Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1
+
+Tips:
+- To create a screen, just create a big rectangle
+- You can copy and paste elements (buttons, text fields, etc.) from other Figma projects like this one: https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4408%3A773
+- You can group multiple items together by command / control clicking on them, then right click and press 'group'
