@@ -144,7 +144,7 @@ git commit -m "some commit message"
 git push -u origin main
 ```
 
-# Part 01 - Mockup and Frontend Setup
+## Part 01 - Mockup and Frontend Setup
 
 Create a rough mockup of your web app in Figma (https://www.figma.com/)
 
