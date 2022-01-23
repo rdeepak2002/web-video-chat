@@ -67,7 +67,21 @@ sudo chown -R $USER /usr/local/bin/
 sudo chown -R $USER /usr/local/share/
 ```
 
-## Part 00 - Project Setup (https://youtu.be/UdC2CUp6if8)
+## Part 00 - Mockup and Frontend Setup
+
+Create a rough mockup of your web app in Figma (https://www.figma.com/)
+
+Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1
+
+Tips:
+- To create a screen, just create a big rectangle
+- You can copy and paste elements (buttons, text fields, etc.) from other Figma projects like these ones: 
+  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4408%3A773
+  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4213%3A8332
+  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)
+- You can group multiple items together by command / control clicking on them, then right click and press 'group'
+
+## Part 01 - Project Setup (https://youtu.be/UdC2CUp6if8)
 
 Goal: Create the skeleton for this project (folder for server code and folder for website code) and push the code to GitHub
 
@@ -143,17 +157,3 @@ git add .
 git commit -m "some commit message"
 git push -u origin main
 ```
-
-## Part 01 - Mockup and Frontend Setup
-
-Create a rough mockup of your web app in Figma (https://www.figma.com/)
-
-Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1
-
-Tips:
-- To create a screen, just create a big rectangle
-- You can copy and paste elements (buttons, text fields, etc.) from other Figma projects like these ones: 
-  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4408%3A773
-  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4213%3A8332
-  - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)
-- You can group multiple items together by command / control clicking on them, then right click and press 'group'
