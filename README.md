@@ -8,8 +8,14 @@ Tutorial on how to create a Zoom 'clone' in the web
 
 Deepak Ramalingam
 
-## Part 00 - Mockup and Frontend Setup
+## Table of Contents
 
+1. [ Part 00 - Mockup and Frontend Setup ](#part00)
+2. [ Part 01 - Software Setup ](#part01)
+3. [ Part 02 - Project Setup ](#part02)
+
+## Part 00 - Mockup and Frontend Setup
+<a name="part00"></a>
 Create a rough mockup of your web app in Figma (https://www.figma.com/)
 
 Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1
@@ -23,6 +29,7 @@ Tips:
 - You can group multiple items together by command / control clicking on them, then right click and press 'group'
 
 ## Part 01 - Software Setup
+<a name="part01"></a>
 
 ### Prerequisites (windows)
 
@@ -80,6 +87,7 @@ sudo chown -R $USER /usr/local/share/
 ```
 
 ## Part 02 - Project Setup (https://youtu.be/UdC2CUp6if8)
+<a name="part02"></a>
 
 Goal: Create the skeleton for this project (folder for server code and folder for website code) and push the code to GitHub
 
