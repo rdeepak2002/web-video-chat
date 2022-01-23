@@ -16,7 +16,7 @@ Deepak Ramalingam
 
 <a name="part00"></a>
 ## Part 00 - Mockup and Frontend Setup
-Create a rough mockup of your web app in Figma (https://www.figma.com/)
+Goal: Create a rough mockup of your web app in Figma (https://www.figma.com/)
 
 Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1
 
@@ -30,6 +30,8 @@ Tips:
 
 <a name="part01"></a>
 ## Part 01 - Software Setup
+
+Goal: Install the necessary software and development tools on your computer
 
 ### Prerequisites (windows)
 
