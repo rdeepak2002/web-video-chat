@@ -13,6 +13,8 @@ Deepak Ramalingam
 1. [ Part 00 - Mockup and Frontend Setup ](#part00)
 2. [ Part 01 - Software Setup ](#part01)
 3. [ Part 02 - Project Setup ](#part02)
+4. [ Part 03 - React Router Setup ](#part03)
+5. [ Part 04 - Implementing Our Mockup ](#part04)
 
 <a name="part00"></a>
 ## Part 00 - Mockup and Frontend Setup
@@ -165,3 +167,148 @@ git add .
 git commit -m "some commit message"
 git push -u origin main
 ```
+
+<a name="part03"></a>
+## Part 03 - React Router Setup
+
+First, we will add routing to our website. 
+
+Example of routing:
+- https://www.website.com/features/ shows the "features" page
+- https://www.website.com/website-templates/ shows the "website-templates" page
+
+A popular library for implementing routing in React is the React Router library: https://reactrouter.com/docs/en/v6/getting-started/tutorial
+
+To install it, run the following command in your web-app folder:
+
+```shell
+cd web-app
+npm install react-router-dom --save
+```
+
+Then modify the content of "src/App.js" to have two routes (one for our home page and another for the video chat page):
+
+```jsx
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+
+export const k_home_route = "/home";
+export const k_video_chat_route = "/meet";
+
+const HomePage = () => {
+  return (
+          <div>
+            Hello world from home page
+          </div>
+  );
+}
+
+const VideoChatPage = () => {
+  return (
+          <div>
+            Hello world from video chat page
+          </div>
+  );
+}
+
+const App = () => {
+  return (
+      <Router>
+        <div>
+          {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+          <Routes>
+            <Route path={k_home_route} element={<HomePage />} />
+            <Route path={k_video_chat_route} element={<VideoChatPage />} />
+            <Route path="*" element={<Navigate to={k_home_route}/>} />
+          </Routes>
+        </div>
+      </Router>
+  );
+}
+
+export default App;
+```
+
+Run the app using "npm start" in the web-app folder.
+
+Notice the following:
+- http://localhost:3000/home will show us the home page
+- http://localhost:3000/meet will show us the video chat page
+- We added a "Navigate" element at the end of Routes to have the website redirect to the home page if the URL is not recognized
+  - Ex: http://localhost:3000/asdf will redirect to http://localhost:3000/home
+
+After this, we will move the "HomePage" and "VideoChatPage" components to separate files.
+
+Create a new file in web-app/src/component/HomePage called "index.jsx" with the following content:
+
+```jsx
+const HomePage = () => {
+    return (
+        <div>
+            Hello world from home page
+        </div>
+    );
+}
+
+export default HomePage;
+```
+
+Create a new file in web-app/src/component/VideoChatPage called "index.jsx" with the following content:
+
+```jsx
+const VideoChatPage = () => {
+  return (
+          <div>
+            Hello world from video chat page
+          </div>
+  );
+}
+
+export default VideoChatPage;
+```
+
+Modify App.js to refer to these new files:
+
+```jsx
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+import VideoChatPage from "./component/VideoChatPage";
+import HomePage from "./component/HomePage";
+
+export const k_home_route = "/home";
+export const k_video_chat_route = "/meet";
+
+const App = () => {
+  return (
+      <Router>
+        <div>
+          {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+          <Routes>
+            <Route path={k_home_route} element={<HomePage />} />
+            <Route path={k_video_chat_route} element={<VideoChatPage />} />
+            <Route path="*" element={<Navigate to={k_home_route}/>} />
+          </Routes>
+        </div>
+      </Router>
+  );
+}
+
+export default App;
+```
+
+Good job, you set up routing on your website!
+
+<a name="part04"></a>
+## Part 04 - Implementing our Mockup
+
+WIP

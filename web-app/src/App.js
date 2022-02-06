@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+import VideoChatPage from "./component/VideoChatPage";
+import HomePage from "./component/HomePage";
 
-function App() {
+export const k_home_route = "/home";
+export const k_video_chat_route = "/meet";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Router>
+        <div>
+          {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+          <Routes>
+            <Route path={k_home_route} element={<HomePage />} />
+            <Route path={k_video_chat_route} element={<VideoChatPage />} />
+            <Route path="*" element={<Navigate to={k_home_route}/>} />
+          </Routes>
+        </div>
+      </Router>
   );
 }
 
