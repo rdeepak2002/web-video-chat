@@ -25,7 +25,7 @@ Example: https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%
 
 Tips:
 - To create a screen, just create a big rectangle
-- You can copy and paste elements (buttons, text fields, etc.) from other Figma projects like these ones: 
+- You can copy and paste elements (buttons, text fields, etc.) from other Figma projects like these ones:
   - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4408%3A773
   - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)?node-id=4213%3A8332
   - https://www.figma.com/file/9bhIrgZ7ubfDID7NLCq4Ld/MUI-for-Figma-v5.0.1-(Free)-(Community)
@@ -172,7 +172,7 @@ git push -u origin main
 <a name="part03"></a>
 ## Part 03 - React Router Setup
 
-First, we will add routing to our website. 
+First, we will add routing to our website.
 
 Example of routing:
 - https://www.website.com/features/ shows the "features" page
@@ -344,7 +344,7 @@ body {
 
 This will make our webpage take up the entire width and height of the screen.
 
-Then, we will add a Material UI Theme to our application. This will make it so that coloring and styles can be consistent throughout our app. We can even setup a system to switch between dark mode and light mode. 
+Then, we will add a Material UI Theme to our application. This will make it so that coloring and styles can be consistent throughout our app. We can even setup a system to switch between dark mode and light mode.
 
 Modify web-app/src/App.js to wrap the entire application with a ThemeProvider component:
 
@@ -443,9 +443,9 @@ export default VideoChatPage;
 
 Now, we should see the Home Page and Video Chat Pages having a black background with white text.
 
-After this, we will implement our mockup. 
+After this, we will implement our mockup.
 
-We will also use some basic React code to have the Home Page navigate to the Video Chat Page and pass along the inputted data via the url. 
+We will also use some basic React code to have the Home Page navigate to the Video Chat Page and pass along the inputted data via the url.
 
 We will also use the 'qs' library to parse data from the URL. Install it with the following commands:
 
@@ -989,19 +989,25 @@ import http from 'http';
 import {Server} from 'socket.io';
 
 const port = process.env.PORT || 8080;
-const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
+// const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
+
+// console.log('cors origin', CORS_ORIGIN);
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server,{
-  cors: {
-    origin: CORS_ORIGIN
-  }
+    cors: {
+        origins: "*:*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["content-type"],
+        pingTimeout: 7000,
+        pingInterval: 3000
+    }
 });
 
 // Middlewares
 app.use(cors({
-  origin: CORS_ORIGIN
+    origin: "*"
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -1012,47 +1018,51 @@ app.use(express.urlencoded({ extended: true }));
 // });
 
 io.on('connection', socket => {
-  console.log('user connected');
+    console.log('user connected');
 
-  socket.on('join-room', (userData) => {
-    const { socketId, roomId, name, status } = userData;
+    socket.on('join-room', (userData) => {
+        const { socketId, roomId, name, status } = userData;
 
-    console.log(`user joined ${roomId}`, userData);
+        console.log(`user joined ${roomId}`, userData);
 
-    socket.join(roomId);
-    io.in(roomId).emit('new-user-connect', userData);
-    socket.on('chat-message', (chatData) => {
-      console.log('chat message');
-      io.to(roomId).emit('chat-message', chatData);
+        socket.join(roomId);
+        io.in(roomId).emit('new-user-connect', userData);
+        socket.on('peer-id-offer', (peerIdData) => {
+            console.log('peer-id-offer');
+            socket.to(roomId).emit('peer-id-received', peerIdData);
+        });
+        socket.on('chat-message', (chatData) => {
+            console.log('chat message');
+            io.to(roomId).emit('chat-message', chatData);
+        });
+        socket.on('update', () => {
+            console.log('user update');
+            io.to(roomId).emit('user-update', userData);
+        });
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+            io.in(roomId).emit('user-disconnected', userData);
+        });
+        socket.on('broadcast-message', (message) => {
+            io.in(roomId).emit('new-broadcast-messsage', {...message, userData});
+        });
+        // socket.on('reconnect-user', () => {
+        //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
+        // });
+        socket.on('display-media', (value) => {
+            io.in(roomId).emit('display-media', {socketId, value });
+        });
+        socket.on('user-video-off', (value) => {
+            io.in(roomId).emit('user-video-off', value);
+        });
     });
-    socket.on('update', () => {
-      console.log('user update');
-      io.to(roomId).emit('user-update', userData);
-    });
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-      io.in(roomId).emit('user-disconnected', userData);
-    });
-    socket.on('broadcast-message', (message) => {
-      io.in(roomId).emit('new-broadcast-messsage', {...message, userData});
-    });
-    // socket.on('reconnect-user', () => {
-    //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
-    // });
-    socket.on('display-media', (value) => {
-      io.in(roomId).emit('display-media', {socketId, value });
-    });
-    socket.on('user-video-off', (value) => {
-      io.in(roomId).emit('user-video-off', value);
-    });
-  });
 });
 
 // Server listen initilized
 server.listen(port, () => {
-  console.log(`Listening on the port ${port}`);
+    console.log(`Listening on the port ${port}`);
 }).on('error', e => {
-  console.error(e);
+    console.error(e);
 });
 ```
 
@@ -1086,13 +1096,8 @@ import socketIOClient from "socket.io-client";
 import { v4 as uuidV4 } from 'uuid';
 import Peer from "peerjs";
 
-// TODO: update this to read value from environment variables
-const API_ENDPOINT = "http://localhost:8080";
-const PEER_SERVER_OPTIONS = {
-  host: 'localhost',
-  port: 8081,
-  path: '/peerjs'
-};
+// get url of socket server
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
 // keep track of possible status for clients
 const k_connected_status = "connected";
@@ -1100,275 +1105,333 @@ const k_disconnected_status = "disconnected";
 
 // video chatting page
 const VideoChatPage = () => {
-  // reference to socket handler
-  const [socketHandler, setSocketHandler] = useState(undefined);
+    // reference to socket handler
+    const [socketHandler, setSocketHandler] = useState(undefined);
+    // const [peerHandler, setPeerHandler] = useState(undefined);
 
-  // keep track of what the user's name and the room code
-  const [userName, setUserName] = useState('');
-  const [roomCode, setRoomCode] = useState('');
-  const [userId, setUserId] = useState(`${uuidV4()}`);
+    const [remoteStreams, setRemoteStreams] = useState({});
 
-  const myVideoRef = useRef({userId: <video />});
+    // keep track of what the user's name and the room code
+    const [userName, setUserName] = useState('');
+    const [roomCode, setRoomCode] = useState('');
+    const [userId, setUserId] = useState(`${uuidV4()}`);
 
+    const myVideoRef = useRef(undefined);
 
-  // keep track of video clients
-  const [clients, setClients] = useState({
-    // 'id1': {
-    //     socketId: 'id1',
-    //     roomId: 'testval',
-    //     name: 'user a',
-    //     status: k_connected_status
-    // },
-  });
+    // keep track of video clients
+    const [clients, setClients] = useState({
+            // 'id1': {
+            //     socketId: 'id1',
+            //     roomId: 'testval',
+            //     name: 'user a',
+            //     status: k_connected_status
+            // },
+    });
 
-  // keep track of chat messages
-  const [chatMessages, setChatMessages] = useState([
-    // {
-    //     guid: 'guid1',
-    //     socketId: 'id1',
-    //     message: 'message 1'
-    // },
-  ]);
+    // keep track of chat messages
+    const [chatMessages, setChatMessages] = useState([
+        // {
+        //     guid: 'guid1',
+        //     socketId: 'id1',
+        //     message: 'message 1'
+        // },
+    ]);
 
-  // get the search string, ex: "?name=deepak&room-code=abc123"
-  const { search } = useLocation();
+    // get the search string, ex: "?name=deepak&room-code=abc123"
+    const { search } = useLocation();
 
-  // function to navigate between pages
-  const navigate = useNavigate();
+    // function to navigate between pages
+    const navigate = useNavigate();
 
-  // every time the search string changes (should happen only once), run this function
-  useEffect(() => {
-    // navigate to home if search params are empty
-    if (!search || search.length <= 0) {
-      navigate(k_video_chat_route);
-      return;
-    }
-
-    // remove the question mark present in the beginning of search params
-    const searchWithoutQuestionMark = search.substring(1);
-    const parsedSearch = qs.parse(searchWithoutQuestionMark);
-
-    // get the name of person and room code from search params
-    const nameFromSearch = parsedSearch[k_name_search_param];
-    const roomCodeFromSearch = parsedSearch[k_room_code_search_param];
-
-    // navigate to home if search params are not valid
-    if(!nameFromSearch || nameFromSearch.length <= 0 || !roomCodeFromSearch || roomCodeFromSearch.length <= 0) {
-      navigate(k_video_chat_route);
-      return;
-    }
-
-    // otherwise if everything is valid and we were able to get the search params, store these as variables
-    setUserName(nameFromSearch);
-    setRoomCode(roomCodeFromSearch);
-  }, [search]);
-
-  // set user's own video
-  useEffect(() => {
-    const myVidRef = myVideoRef.current[userId];
-
-    if(myVideoRef) {
-      navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true }).then(mediaStream => {
-        myVidRef.srcObject = mediaStream;
-        myVidRef.muted = true;
-        myVidRef.play();
-      })
-    }
-  }, [myVideoRef.current[userId]]);
-
-  // create connection to socket client
-  useEffect( async () => {
-    // check whether roomCode and userName are valid
-    console.log(myVideoRef.current);
-    if(roomCode && userName && roomCode.trim().length > 0 && userName.trim().length > 0) {
-      // get user's video (to send to other clients)
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true })
-
-      // create peer connection
-      const peer = new Peer(userId, PEER_SERVER_OPTIONS);
-
-      peer.on('call', function(call) {
-        console.log('answering call', call);
-        // Answer the call, providing our mediaStream
-        call.answer(mediaStream);
-      });
-
-      // create socket connection
-      const socket = socketIOClient(API_ENDPOINT);
-
-      socket.on("new-user-connect", data => {
-        const socketId = data.socketId;
-        const clientsCopy = clients;
-        clientsCopy[socketId] = data;
-        setClients(Object.assign({}, clientsCopy));
-
-        // tell all other users this user has 'updated'
-        socket.emit("update", {
-          socketId: userId,
-          roomId: roomCode,
-          name: userName,
-          status: k_connected_status
-        });
-      });
-
-      socket.on("user-update", data => {
-        const socketId = data.socketId;
-        const clientsCopy = clients;
-        clientsCopy[socketId] = data;
-        // console.log('user update')
-        setClients(Object.assign({}, clientsCopy));
-
-        // dont allow user to connect to themself
-        if(socketId !== userId) {
-          // call other peer
-          const call = peer.call(socketId, mediaStream);
-
-          call.on('stream', function(stream) {
-            // `stream` is the MediaStream of the remote peer.
-            // Here you'd add it to an HTML video/canvas element.
-            let video = myVideoRef.current[socketId];
-            video.srcObject = stream;
-            video.play();
-          });
+    // every time the search string changes (should happen only once), run this function
+    useEffect(() => {
+        // navigate to home if search params are empty
+        if (!search || search.length <= 0) {
+            navigate(k_video_chat_route);
+            return;
         }
-      });
 
-      socket.on("user-disconnected", data => {
-        const socketId = data.socketId;
-        const clientsCopy = clients;
-        clientsCopy[socketId].status = k_disconnected_status
-        setClients(Object.assign({}, clientsCopy));
-      });
+        // remove the question mark present in the beginning of search params
+        const searchWithoutQuestionMark = search.substring(1);
+        const parsedSearch = qs.parse(searchWithoutQuestionMark);
 
-      socket.on("chat-message", data => {
-        // console.log('chat message', data);
-        const chatMessagesCopy = chatMessages;
-        chatMessagesCopy.push(data);
-        setChatMessages([...chatMessagesCopy]);
-      });
+        // get the name of person and room code from search params
+        const nameFromSearch = parsedSearch[k_name_search_param];
+        const roomCodeFromSearch = parsedSearch[k_room_code_search_param];
 
-      // join the socket room
-      socket.emit("join-room", {
-        socketId: userId,
-        roomId: roomCode,
-        name: userName,
-        status: k_connected_status
-      });
+        // navigate to home if search params are not valid
+        if(!nameFromSearch || nameFromSearch.length <= 0 || !roomCodeFromSearch || roomCodeFromSearch.length <= 0) {
+            navigate(k_video_chat_route);
+            return;
+        }
 
-      // update socket handler variable so other parts of code can call this
-      setSocketHandler(socket);
+        // otherwise if everything is valid and we were able to get the search params, store these as variables
+        setUserName(nameFromSearch);
+        setRoomCode(roomCodeFromSearch);
+    }, [search]);
 
-      // disconnect the socket after this page closes
-      return () => {
-        socket.disconnect();
-        peer.disconnect();
-      };
+    const addVideoStream = (remoteStream) => {
+        // if(!myVideoRef.current) {
+        console.log('adding video stream for peer', remoteStream.id);
+        const remoteStreamsCopy = remoteStreams;
+        remoteStreamsCopy[remoteStream.id] = remoteStream;
+        setRemoteStreams(Object.assign({}, remoteStreamsCopy));
     }
-  }, [userName, roomCode]);
 
-  // render the page
-  return (
-          <Box
-                  sx={{
+    useEffect(() => {
+        if(userId && userName) {
+            // setup peer connection
+            const peer = new Peer(userId, {
+                // host: "web-video-chat-peer-server-v2.herokuapp.com",
+                'iceServers': [
+                    { url: 'stun:stun.l.google.com:19302' },
+                    { url: 'turn:numb.viagenie.ca:3478', credential: 'muazkh', username:'web...@live.com' },
+                    { url: 'turn:numb.viagenie.ca', credential: 'muazkh', username:'web...@live.com' },
+                    { url: 'turn:192.158.29.39:3478?transport=udp', credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=', username:'28224511:1379330808' },
+                    { url: 'turn:192.158.29.39:3478?transport=tcp', credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=', username:'28224511:1379330808' }
+                ]
+            })
+
+            // setup socket connection
+            const socket = process.env.REACT_APP_ENV === "PRODUCTION" ?  socketIOClient(API_ENDPOINT, {secure: true}) : socketIOClient(API_ENDPOINT, {secure: true});
+
+            // function to call other peers
+            const callPeer = ( id ) =>
+            {
+                navigator.mediaDevices.getUserMedia({ video : true , audio : true })
+                    .then(  (stream) => {
+                        // TODO: this is our own video - display it?
+                        // addVideoStream(stream);
+                        console.log('our video stream we will send', stream);
+
+                        // attempt to call the other person with this stream
+                        let call = peer.call(id, stream);
+
+                        call.on('stream' , (remoteStream) => {
+                            // TODO: this is the video of the new peer - display it?
+                            console.log('stream from person I called', remoteStream);
+                            addVideoStream(remoteStream);
+                        });
+                    })
+                    .catch( (e)=>{
+                        console.log('error1' , e );
+                    });
+            }
+
+            // setup peer listeners
+            // peer connection opens
+            peer.on('open', (myPeerId) => {
+                // inform other clients about your peer id
+                console.log('my peer id', myPeerId);
+                socket.emit('peer-id-offer' , { id : myPeerId}); // send your peerid to other users in the room via socket.io
+            });
+
+            // handle receiving call from other clients in the room
+            peer.on('call' , (call) => {
+                // send your own stream for the caller and add the caller stream to your page
+                navigator.mediaDevices.getUserMedia({ video : true , audio : true })
+                    .then((stream) => {
+                        // TODO: this is our own video - display it?
+                        // addVideoStream(stream);
+                        console.log('our video stream we will respond with', stream);
+
+                        call.answer(stream);
+                        call.on('stream' , (remoteStream) => {
+                            // TODO: handle receiving video call from someone else
+                            console.log('stream from person who called me', remoteStream);
+                            addVideoStream(remoteStream);
+                        })
+
+                    })
+                    .catch( (e)=>{
+                        console.log('error2' , e );
+                    });
+            })
+
+            // setup socket listeners
+            // listener for new peerjs id
+            socket.on('peer-id-received', (data) => {
+                const newPeerId = data.id;
+                console.log('received peer id', newPeerId);
+                callPeer(newPeerId);
+            });
+
+            // listener for chat messages
+            socket.on("chat-message", (data) => {
+                console.log('chat message', data);
+                const chatMessagesCopy = chatMessages;
+                chatMessagesCopy.push(data);
+                setChatMessages([...chatMessagesCopy]);
+            });
+
+            // join the socket room
+            socket.emit("join-room", {
+                socketId: userId,
+                roomId: roomCode,
+                name: userName,
+                status: k_connected_status
+            });
+
+            // set state variable
+            setSocketHandler(socket);
+
+            return () => {
+                socketHandler.close();
+                peer.disconnect();
+            };
+        }
+    }, [userId, userName])
+
+    // render the page
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            <Grid container direction={"row"} spacing={0} sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%'
+            }}>
+                <VideoFeeds userId={userId} clients={clients} myVideoRef={myVideoRef} remoteStreams={remoteStreams}/>
+                <Chat clients={clients} chatMessages={chatMessages} socketHandler={socketHandler} userId={userId}/>
+            </Grid>
+        </Box>
+    );
+}
+
+const VideoFeeds = (props) => {
+    return(
+        <Grid item xs={9}>
+            <Box
+                sx={{
                     display: 'flex',
-                    flexDirection: 'row',
+                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     width: '100%',
                     height: '100%',
                     bgcolor: 'background.default',
                     color: 'text.primary'
-                  }}
-          >
-            <Grid container direction={"row"} spacing={0} sx={{
-              display: 'flex',
-              alignItems: 'stretch',
-              justifyContent: 'center',
-              width: '100%',
-              height: '100%'
-            }}>
-              <VideoFeeds clients={clients} myVideoRef={myVideoRef} />
-              <Chat clients={clients} chatMessages={chatMessages} socketHandler={socketHandler} userId={userId}/>
-            </Grid>
-          </Box>
-  );
+                }}
+            >
+                <div className="video-feeds-wrapper">
+                    {/*<div key={'something'} className="video-feed">*/}
+                    {/*    <Typography>{'other person'}</Typography>*/}
+                    {/*    <Typography>{'other client id'}</Typography>*/}
+                    {/*    /!*<Video remoteStream={}/>*!/*/}
+                    {/*    /!*<video id={'client id'} style={{width: '100%'}} ref={el => props.myVideoRef.current[clientId] = el} />*!/*/}
+                    {/*</div>*/}
+                    {
+                        Object.keys(props.remoteStreams).map((remoteStreamId) => {
+                            const remoteStream = props.remoteStreams[remoteStreamId];
+
+                            // if(clientId !== props.userId)
+
+                            return (
+                                <div key={remoteStreamId} className="video-feed">
+                                    <Typography>{remoteStreamId}</Typography>
+                                    <Video remoteStream={remoteStream}/>
+                                    {/*<video id={'client id'} style={{width: '100%'}} ref={el => props.myVideoRef.current[clientId] = el} />*/}
+                                </div>
+                            );
+                        })
+                    }
+                    {
+                        Object.keys(props.clients).map((clientId) => {
+                            const client = props.clients[clientId];
+
+                            // if(clientId !== props.userId)
+
+                            if(client.status === k_connected_status) {
+                                return (
+                                    <div key={clientId} className="video-feed">
+                                        <Typography>{client.name}</Typography>
+                                        <Typography>{clientId}</Typography>
+                                        <video id={clientId} style={{width: '100%'}} ref={el => props.myVideoRef.current[clientId] = el} />
+                                    </div>
+                                );
+                            }
+                        })
+                    }
+                </div>
+            </Box>
+        </Grid>
+    );
 }
 
-const VideoFeeds = (props) => {
-  return(
-          <Grid item xs={9}>
-            <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      height: '100%',
-                      bgcolor: 'background.default',
-                      color: 'text.primary'
-                    }}
-            >
-              <div className="video-feeds-wrapper">
-                {
-                  Object.keys(props.clients).map((clientId) => {
-                    const client = props.clients[clientId];
+const Video = (props, muted=true) => {
+    const myVideoRef = useRef(undefined);
 
-                    if(client.status === k_connected_status) {
-                      return (
-                              <div key={clientId} className="video-feed">
-                                <Typography>{client.name}</Typography>
-                                <Typography>{clientId}</Typography>
-                                <video style={{width: '100%'}} ref={el => props.myVideoRef.current[clientId] = el} />
-                              </div>
-                      );
-                    }
-                  })
-                }
-              </div>
-            </Box>
-          </Grid>
-  );
+    useEffect(() => {
+        if(myVideoRef.current) {
+            myVideoRef.current.srcObject = props.remoteStream;
+            myVideoRef.current.muted = muted;
+            myVideoRef.current.addEventListener("loadedmetadata", () => { // When all the metadata has been loaded
+                myVideoRef.current.play(); // Play the video
+            });
+            myVideoRef.current.onloadedmetadata = (e) => {
+                myVideoRef.current.play();
+            };
+        }
+    }, [myVideoRef.current]);
+
+    return (
+        <video controls width="640" height="240" id={'client id'} style={{width: '100%'}} ref={myVideoRef} />
+    );
 }
 
 const Chat = (props) => {
-  const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('');
 
-  // function to send a message
-  const sendMessage = (message) => {
-    // prevent empty message from being sent
-    if(message || message.trim().length > 0) {
-      if(props.socketHandler) {
-        // emit message to socket server
-        props.socketHandler.emit('chat-message', {
-          guid: uuidV4(),
-          socketId: props.userId,
-          message: message
-        });
+    // function to send a message
+    const sendMessage = (message) => {
+        // prevent empty message from being sent
+        if(message || message.trim().length > 0) {
+            if(props.socketHandler) {
+                // emit message to socket server
+                props.socketHandler.emit('chat-message', {
+                    guid: uuidV4(),
+                    socketId: props.userId,
+                    message: message
+                });
 
-        // clear text field after sending message
-        setMessage('');
-      }
+                // clear text field after sending message
+                setMessage('');
+            }
+            else {
+                console.warn('socket handler not defined, unable to send message');
+            }
+        }
     }
-  }
 
-  return(
-          <Grid item xs={3}>
+    return(
+        <Grid item xs={3}>
             <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      height: '100%',
-                      bgcolor: 'background.darker',
-                      color: 'text.primary'
-                    }}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    bgcolor: 'background.darker',
+                    color: 'text.primary'
+                }}
             >
-              {/*List of messages*/}
-              <Box
-                      sx={{
+                {/*List of messages*/}
+                <Box
+                    sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-start',
@@ -1376,84 +1439,84 @@ const Chat = (props) => {
                         flexGrow: 1,
                         width: '100%',
                         color: 'text.primary',
-                      }}
-              >
-                <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'flex-start',
-                          justifyContent: 'flex-start',
-                          flexGrow: 1,
-                          width: '100%',
-                          color: 'text.primary',
-                          // padding: '20px'
-                        }}
+                    }}
                 >
-                  {
-                    props.chatMessages.map((chatMessage) => {
-                      const client = props.clients[chatMessage.socketId]
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'flex-start',
+                            flexGrow: 1,
+                            width: '100%',
+                            color: 'text.primary',
+                            // padding: '20px'
+                        }}
+                    >
+                        {
+                            props.chatMessages.map((chatMessage) => {
+                                // const client = props.clients[chatMessage.socketId]
 
-                      return (
-                              <Box
-                                      key={chatMessage.guid}
-                                      sx={{
-                                        width: '100%',
-                                      }}
-                              >
-                                <Typography>Name: {client.name}</Typography>
-                                <Typography>Message: {chatMessage.message}</Typography>
-                                {/*grey horizontal line*/}
-                                <Box sx={{
-                                  marginTop: '10px',
-                                  marginBottom: '10px',
-                                  width: '100%',
-                                  height: '2px',
-                                  bgcolor: '#6b6b6b'
-                                }}/>
-                              </Box>
-                      );
-                    })
-                  }
+                                return (
+                                    <Box
+                                        key={chatMessage.guid}
+                                        sx={{
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <Typography>Name: {chatMessage.socketId}</Typography>
+                                        <Typography>Message: {chatMessage.message}</Typography>
+                                        {/*grey horizontal line*/}
+                                        <Box sx={{
+                                            marginTop: '10px',
+                                            marginBottom: '10px',
+                                            width: '100%',
+                                            height: '2px',
+                                            bgcolor: '#6b6b6b'
+                                        }}/>
+                                    </Box>
+                                );
+                            })
+                        }
+                    </Box>
                 </Box>
-              </Box>
-              {/*Input field form*/}
-              <FormGroup
-                      sx={{
+                {/*Input field form*/}
+                <FormGroup
+                    sx={{
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: '100%',
                         color: 'text.primary',
-                      }}
-              >
-                <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexGrow: 0.1,
-                          width: '100%',
-                          color: 'text.primary',
-                          columnGap: '10px',
-                          padding: '10px'
-                        }}
+                    }}
                 >
-                  <TextField id="message-input" label="Message" variant="standard" value={message}
-                             onChange={(event) => {
-                               setMessage(event.target.value);
-                             }} sx={{
-                    flexGrow: 1
-                  }}
-                  />
-                  <Button variant="contained" onClick={() => {sendMessage(message)}}>Send</Button>
-                </Box>
-              </FormGroup>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexGrow: 0.1,
+                            width: '100%',
+                            color: 'text.primary',
+                            columnGap: '10px',
+                            padding: '10px'
+                        }}
+                    >
+                        <TextField id="message-input" label="Message" variant="standard" value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value);
+                            }} sx={{
+                                flexGrow: 1
+                            }}
+                        />
+                        <Button variant="contained" onClick={() => {sendMessage(message)}}>Send</Button>
+                    </Box>
+                </FormGroup>
             </Box>
-          </Grid>
-  );
+        </Grid>
+    );
 }
 
 
