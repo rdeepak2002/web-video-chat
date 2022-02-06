@@ -23,7 +23,7 @@ const VideoChatPage = () => {
     // keep track of peer connections
     const [myPeer, setMyPeer] = useState(undefined);
 
-    const myVideoRef = useRef(null);
+    const myVideoRef = useRef({});
 
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
@@ -88,7 +88,7 @@ const VideoChatPage = () => {
         navigator.mediaDevices
             .getUserMedia({ video: { width: 300 } })
             .then(stream => {
-                let video = myVideoRef.current;
+                let video = myVideoRef.current[userId];
                 video.srcObject = stream;
                 video.play();
             })
@@ -278,15 +278,12 @@ const VideoFeeds = (props) => {
                                     <div key={clientId} className="video-feed">
                                         <Typography>{client.name}</Typography>
                                         <Typography>{clientId}</Typography>
+                                        <video ref={el => props.myVideoRef.current[clientId] = el} />
                                     </div>
                                 );
                             }
                         })
                     }
-                    <div className="video-feed">
-                        <Typography>{'You'}</Typography>
-                        <video ref={props.myVideoRef} />
-                    </div>
                 </div>
             </Box>
         </Grid>
