@@ -152,6 +152,16 @@ const VideoFeeds = (props) => {
 }
 
 const Chat = (props) => {
+    const [message, setMessage] = useState('');
+
+    // function to send a message
+    const sendMessage = (message) => {
+        // prevent empty message from being sent
+        if(message || message.trim().length > 0) {
+            alert(`TODO: send message ${message}`);
+        }
+    }
+
     return(
         <Grid item xs={3}>
             <Box
@@ -241,10 +251,14 @@ const Chat = (props) => {
                             padding: '10px'
                         }}
                     >
-                        <TextField id="message-input" label="Message" variant="standard" sx={{
-                            flexGrow: 1
-                        }}/>
-                        <Button variant="contained">Send</Button>
+                        <TextField id="message-input" label="Message" variant="standard" value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value);
+                            }} sx={{
+                                flexGrow: 1
+                            }}
+                        />
+                        <Button variant="contained" onClick={() => {sendMessage(message)}}>Send</Button>
                     </Box>
                 </FormGroup>
             </Box>
