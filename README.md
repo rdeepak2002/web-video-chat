@@ -415,6 +415,7 @@ export default HomePage;
 ```
 
 Modify web-app/src/component/VideoChatPage/index.jsx to use this theme:
+
 ```jsx
 import {Box, Typography} from "@mui/material";
 
@@ -437,5 +438,29 @@ const VideoChatPage = () => {
 }
 
 export default VideoChatPage;
+```
+
+Now, we should see the Home Page and Video Chat Pages having a black background with white text.
+
+After this, we will implement our mockup. 
+
+We will also use some basic React code to have the Home Page navigate to the Video Chat Page and pass along the inputted data via the url. 
+
+This is what web-app/src/App.js looks like:
+
+```js
+
+```
+
+This is what web-app/src/component/HomePage/index.jsx looks like:
+
+```jsx
+
+```
+
+This is what web-app/src/component/VideoChatPage/index.jsx looks like:
+
+```jsx
+
 ```
 

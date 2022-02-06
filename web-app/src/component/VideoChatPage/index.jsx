@@ -1,5 +1,6 @@
 import {Box, Typography} from "@mui/material";
 
+// video chatting page
 const VideoChatPage = () => {
     return (
         <Box

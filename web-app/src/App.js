@@ -2,7 +2,6 @@ import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom
 import VideoChatPage from "./component/VideoChatPage";
 import HomePage from "./component/HomePage";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {green, purple} from "@mui/material/colors";
 
 export const k_home_route = "/home";
 export const k_video_chat_route = "/meet";
@@ -11,11 +10,8 @@ const theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: purple[500],
-        },
-        secondary: {
-            main: green[500],
-        },
+            main: '#3F51B5',
+        }
     },
 });
 
