@@ -278,7 +278,7 @@ const VideoFeeds = (props) => {
                                     <div key={clientId} className="video-feed">
                                         <Typography>{client.name}</Typography>
                                         <Typography>{clientId}</Typography>
-                                        <video ref={el => props.myVideoRef.current[clientId] = el} />
+                                        <video style={{width: '100%'}} ref={el => props.myVideoRef.current[clientId] = el} />
                                     </div>
                                 );
                             }
