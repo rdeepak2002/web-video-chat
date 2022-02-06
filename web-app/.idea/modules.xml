@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../peer-server/.idea/peer-server.iml" filepath="$PROJECT_DIR$/../peer-server/.idea/peer-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../server/.idea/server.iml" filepath="$PROJECT_DIR$/../server/.idea/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/web-app.iml" filepath="$PROJECT_DIR$/.idea/web-app.iml" />
+    </modules>
+  </component>
+</project>
