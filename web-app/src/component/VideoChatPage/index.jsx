@@ -1,4 +1,4 @@
-import {Box, Grid, Typography} from "@mui/material";
+import {Box, Button, FormGroup, Grid, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import qs from "qs";
@@ -121,7 +121,49 @@ const VideoChatPage = () => {
                             color: 'text.primary'
                         }}
                     >
-                        <Typography>Chat</Typography>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexGrow: 1,
+                                width: '100%',
+                                bgcolor: 'blue',
+                                color: 'text.primary'
+                            }}
+                        >
+                            <Typography>Chat</Typography>
+                        </Box>
+                        <FormGroup
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                color: 'text.primary',
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexGrow: 0.1,
+                                    width: '100%',
+                                    color: 'text.primary',
+                                    columnGap: '10px',
+                                    padding: '10px'
+                                }}
+                            >
+                                <TextField id="message-input" label="Message" variant="standard" sx={{
+                                    flexGrow: 1
+                                }}/>
+                                <Button variant="contained">Send</Button>
+                            </Box>
+                        </FormGroup>
                     </Box>
                 </Grid>
             </Grid>
