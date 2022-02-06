@@ -38,6 +38,7 @@ const HomePage = () => {
         return userName.trim().length > 0 && roomCode.trim().length > 0;
     }
 
+    // render the page
     return (
         // Container for this page
         <Box

@@ -5,6 +5,9 @@ import qs from "qs";
 import {k_video_chat_route} from "../../App";
 import {k_name_search_param, k_room_code_search_param} from "../HomePage";
 
+// keep track of possible status for clients
+const k_connected_status = "connected";
+
 // video chatting page
 const VideoChatPage = () => {
     // keep track of what the user's name and the room code
@@ -12,22 +15,45 @@ const VideoChatPage = () => {
     const [roomCode, setRoomCode] = useState('');
 
     // keep track of video clients
-    const [clients, setClients] = useState([
+    const [clients, setClients] = useState({
+            'id1': {
+                socketId: 'id1',
+                name: 'user a',
+                status: k_connected_status
+            },
+            'id2': {
+                socketId: 'id2',
+                name: 'user b',
+                status: k_connected_status
+            },
+            'id3': {
+                socketId: 'id3',
+                name: 'user c',
+                status: k_connected_status
+            },
+            'id4': {
+                socketId: 'id4',
+                name: 'user d',
+                status: k_connected_status
+            },
+    });
+
+    // keep track of chat messages
+    const [chatMessages, setChatMessages] = useState([
         {
+            guid: 'guid1',
             socketId: 'id1',
-            name: 'user a'
+            message: 'message 1'
         },
         {
+            guid: 'guid2',
             socketId: 'id2',
-            name: 'user b'
+            message: 'message 1'
         },
         {
+            guid: 'guid3',
             socketId: 'id3',
-            name: 'user c'
-        },
-        {
-            socketId: 'id3',
-            name: 'user d'
+            message: 'message 1'
         },
     ]);
 
@@ -64,6 +90,7 @@ const VideoChatPage = () => {
         setRoomCode(roomCodeFromSearch);
     }, [search]);
 
+    // render the page
     return (
         <Box
             sx={{
@@ -84,91 +111,146 @@ const VideoChatPage = () => {
                 width: '100%',
                 height: '100%'
             }}>
-                <Grid item xs={9}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            height: '100%',
-                            bgcolor: 'background.default',
-                            color: 'text.primary'
-                        }}
-                    >
-                        <div className="video-feeds-wrapper">
-                            {
-                                clients.map((client) => {
-                                    return (
-                                        <div key={client.socketId} className="video-feed">{client.name}</div>
-                                    );
-                                })
-                            }
-                        </div>
-                    </Box>
-                </Grid>
-                <Grid item xs={3}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            height: '100%',
-                            bgcolor: 'background.darker',
-                            color: 'text.primary'
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexGrow: 1,
-                                width: '100%',
-                                bgcolor: 'blue',
-                                color: 'text.primary'
-                            }}
-                        >
-                            <Typography>Chat</Typography>
-                        </Box>
-                        <FormGroup
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '100%',
-                                color: 'text.primary',
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexGrow: 0.1,
-                                    width: '100%',
-                                    color: 'text.primary',
-                                    columnGap: '10px',
-                                    padding: '10px'
-                                }}
-                            >
-                                <TextField id="message-input" label="Message" variant="standard" sx={{
-                                    flexGrow: 1
-                                }}/>
-                                <Button variant="contained">Send</Button>
-                            </Box>
-                        </FormGroup>
-                    </Box>
-                </Grid>
+                <VideoFeeds clients={clients} />
+                <Chat clients={clients} chatMessages={chatMessages} />
             </Grid>
         </Box>
     );
 }
+
+const VideoFeeds = (props) => {
+    return(
+        <Grid item xs={9}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    bgcolor: 'background.default',
+                    color: 'text.primary'
+                }}
+            >
+                <div className="video-feeds-wrapper">
+                    {
+                        Object.keys(props.clients).map((clientId) => {
+                            const client = props.clients[clientId];
+
+                            if(client.status === k_connected_status) {
+                                return (
+                                    <div key={clientId} className="video-feed">{client.name}</div>
+                                );
+                            }
+                        })
+                    }
+                </div>
+            </Box>
+        </Grid>
+    );
+}
+
+const Chat = (props) => {
+    return(
+        <Grid item xs={3}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    bgcolor: 'background.darker',
+                    color: 'text.primary'
+                }}
+            >
+                {/*List of messages*/}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        justifyContent: 'flex-start',
+                        flexGrow: 1,
+                        width: '100%',
+                        color: 'text.primary',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'flex-start',
+                            flexGrow: 1,
+                            width: '100%',
+                            color: 'text.primary',
+                            // padding: '20px'
+                        }}
+                    >
+                        {
+                            props.chatMessages.map((chatMessage) => {
+                                const client = props.clients[chatMessage.socketId]
+
+                                return (
+                                    <Box
+                                        key={chatMessage.guid}
+                                        sx={{
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <Typography>Name: {client.name}</Typography>
+                                        <Typography>Message: {chatMessage.message}</Typography>
+                                        {/*grey horizontal line*/}
+                                        <Box sx={{
+                                            marginTop: '10px',
+                                            marginBottom: '10px',
+                                            width: '100%',
+                                            height: '2px',
+                                            bgcolor: '#6b6b6b'
+                                        }}/>
+                                    </Box>
+                                );
+                            })
+                        }
+                    </Box>
+                </Box>
+                {/*Input field form*/}
+                <FormGroup
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        color: 'text.primary',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexGrow: 0.1,
+                            width: '100%',
+                            color: 'text.primary',
+                            columnGap: '10px',
+                            padding: '10px'
+                        }}
+                    >
+                        <TextField id="message-input" label="Message" variant="standard" sx={{
+                            flexGrow: 1
+                        }}/>
+                        <Button variant="contained">Send</Button>
+                    </Box>
+                </FormGroup>
+            </Box>
+        </Grid>
+    );
+}
+
 
 export default VideoChatPage;
