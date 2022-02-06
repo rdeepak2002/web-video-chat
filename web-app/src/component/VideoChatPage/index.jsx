@@ -119,6 +119,11 @@ const VideoChatPage = () => {
                 path: '/peerjs'
             });
 
+            peer.on('connection', function(conn) {
+                console.log('peer connected to us', conn);
+            });
+
+
             setMyPeer(peer);
 
             // create socket connection
@@ -154,7 +159,7 @@ const VideoChatPage = () => {
                     console.log('peer connection', conn);
 
                     conn.on('open', function() {
-                        console.log('got peer message');
+                        console.log('peer opened', conn);
 
                         // Receive messages
                         conn.on('data', function(data) {
