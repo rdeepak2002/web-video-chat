@@ -20,15 +20,13 @@ const VideoChatPage = () => {
     // reference to socket handler
     const [socketHandler, setSocketHandler] = useState(undefined);
 
-    // keep track of peer connections
-    const [myPeer, setMyPeer] = useState(undefined);
-
-    const myVideoRef = useRef({});
-
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
     const [roomCode, setRoomCode] = useState('');
     const [userId, setUserId] = useState(`${uuidV4()}`);
+
+    const myVideoRef = useRef({userId: <video />});
+
 
     // keep track of video clients
     const [clients, setClients] = useState({
@@ -111,23 +109,31 @@ const VideoChatPage = () => {
     }, [search]);
 
     // create connection to socket client
-    useEffect(() => {
+    useEffect( async () => {
         // check whether roomCode and userName are valid
+        console.log(myVideoRef.current);
         if(roomCode && userName && roomCode.trim().length > 0 && userName.trim().length > 0) {
             // get user's video
-            let mediaStream;
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true })
 
-            navigator.mediaDevices
-                .getUserMedia({ video: { width: 300 } })
-                .then(stream => {
-                    let video = myVideoRef.current[userId];
-                    video.srcObject = stream;
-                    video.play();
-                    mediaStream = stream;
-                })
-                .catch(err => {
-                    console.error("error:", err);
-                });
+            let video = myVideoRef.current[userId];
+            if(video) {
+                video.srcObject = mediaStream;
+                video.muted = true;
+                video.play();
+            }
+
+            // navigator.mediaDevices
+            //     .getUserMedia({ video: { width: 300 } })
+            //     .then(stream => {
+            //         let video = myVideoRef.current[userId];
+            //         video.srcObject = stream;
+            //         video.play();
+            //         mediaStream = stream;
+            //     })
+            //     .catch(err => {
+            //         console.error("error:", err);
+            //     });
 
             // create peer connection
             const peer = new Peer(userId, {
@@ -145,13 +151,6 @@ const VideoChatPage = () => {
                 // Answer the call, providing our mediaStream
                 call.answer(mediaStream);
             });
-
-            // TODO: implement peer.call
-            // TODO: implement peer.call
-            // TODO: implement peer.call
-            // https://peerjs.com/docs.html#start
-
-            setMyPeer(peer);
 
             // create socket connection
             const socket = socketIOClient(API_ENDPOINT);
@@ -175,7 +174,7 @@ const VideoChatPage = () => {
                 const socketId = data.socketId;
                 const clientsCopy = clients;
                 clientsCopy[socketId] = data;
-                console.log('user update')
+                // console.log('user update')
                 setClients(Object.assign({}, clientsCopy));
 
                 // dont allow user to connect to themself
@@ -183,10 +182,10 @@ const VideoChatPage = () => {
                     // setting up peer connection
                     const conn = peer.connect(socketId);
 
-                    console.log('peer connection', conn);
+                    // console.log('peer connection', conn);
 
                     conn.on('open', function() {
-                        console.log('peer opened', conn);
+                        // console.log('peer opened', conn);
 
                         // Receive messages
                         conn.on('data', function(data) {
@@ -197,20 +196,22 @@ const VideoChatPage = () => {
                         conn.send('Hello!');
                     });
 
+                    console.log('current media stream', mediaStream);
+
                     const call = peer.call(socketId, mediaStream);
 
-                    console.log('setup call', call);
+                    // console.log('setup call', call);
 
                     call.on('stream', function(stream) {
                         // `stream` is the MediaStream of the remote peer.
                         // Here you'd add it to an HTML video/canvas element.
-                        console.log('video stream received', stream);
+                        // console.log('video stream received', stream);
                         // myVideoRef.current[socketId] = stream;
 
                         let video = myVideoRef.current[socketId];
                         video.srcObject = stream;
                         video.play();
-                        mediaStream = stream;
+                        // mediaStream = stream;
                     });
                 }
             });
@@ -223,7 +224,7 @@ const VideoChatPage = () => {
             });
 
             socket.on("chat-message", data => {
-                console.log('chat message', data);
+                // console.log('chat message', data);
                 const chatMessagesCopy = chatMessages;
                 chatMessagesCopy.push(data);
                 setChatMessages([...chatMessagesCopy]);
