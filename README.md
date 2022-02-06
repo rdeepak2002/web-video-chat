@@ -15,6 +15,7 @@ Deepak Ramalingam
 3. [ Part 02 - Project Setup ](#part02)
 4. [ Part 03 - React Router Setup ](#part03)
 5. [ Part 04 - Implementing Our Mockup ](#part04)
+6. [ Part 05 - Getting Started with Backend ](#part05)
 
 <a name="part00"></a>
 ## Part 00 - Mockup and Frontend Setup
@@ -456,22 +457,475 @@ npm install qs --save
 This is what web-app/src/App.js looks like:
 
 ```js
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import VideoChatPage from "./component/VideoChatPage";
+import HomePage from "./component/HomePage";
+import {createTheme, ThemeProvider} from "@mui/material";
 
+// constants to keep track of url routes
+export const k_home_route = "/home";
+export const k_video_chat_route = "/meet";
+
+// setup dark theme for app
+const theme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#3F51B5',
+        },
+        background: {
+            default: '#343434',
+            darker: '#232323',
+            darkest: '#151515'
+        }
+    },
+});
+
+// setup routes and theme for app
+const App = () => {
+    return (
+        <ThemeProvider theme={theme}>
+            <Router>
+                {/* A <Router> looks through its children <Route>s and
+                renders the first one that matches the current URL. */}
+                <Routes>
+                    <Route path={k_home_route} element={<HomePage/>}/>
+                    <Route path={k_video_chat_route} element={<VideoChatPage/>}/>
+                    <Route path="*" element={<Navigate to={k_home_route}/>}/>
+                </Routes>
+            </Router>
+        </ThemeProvider>
+    );
+}
+
+export default App;
 ```
 
 This is what web-app/src/component/HomePage/index.jsx looks like:
 
 ```jsx
+import {Box, Button, Grid, TextField, Typography} from "@mui/material";
+import {createSearchParams, useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {k_video_chat_route} from "../../App";
 
+// constants to keep track of
+export const k_name_search_param = 'name';
+export const k_room_code_search_param = 'room-code';
+
+// landing page
+const HomePage = () => {
+    // keep track of what the user inputs (their name and meeting id)
+    const [userName, setUserName] = useState('');
+    const [roomCode, setRoomCode] = useState('');
+
+    // function to navigate between pages
+    const navigate = useNavigate();
+
+    // function called when clicking JOIN button
+    const handleFormSubmission = () => {
+        // create the search params
+        // ex search params: "name=deepak&room-code=abc123" from http://localhost:3000/meet?name=deepak&room-code=abc123
+        const searchParms = createSearchParams([
+            [k_name_search_param, userName],
+            [k_room_code_search_param, roomCode]
+        ]);
+
+        // then navigate to this new url which has the user's name and their inputted room code
+        // ex url: http://localhost:3000/meet?name=deepak&room-code=abc123
+        navigate({
+            pathname: k_video_chat_route,
+            search: `?${searchParms}`,
+        });
+    }
+
+    // function to return true if input fields have valid input
+    const validInputs = () => {
+        return userName.trim().length > 0 && roomCode.trim().length > 0;
+    }
+
+    // render the page
+    return (
+        // Container for this page
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            {/*Encapsulate all items in a grid so we can specify spacing between them*/}
+            <Grid container direction={"column"} spacing={7} sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+                {/*Video Chat text at top of page*/}
+                <Grid item>
+                    <Typography variant={'h2'}>Video Chat</Typography>
+                </Grid>
+
+                {/*Text field for inputting name*/}
+                <Grid item>
+                    <TextField id="name-input" label="Name" variant="standard" type={"text"} value={userName}
+                               onChange={(event) => {
+                                   // function called when input field is changed
+                                   setUserName(event.target.value);
+                               }}/>
+                </Grid>
+
+                {/*Text field for inputting meeting id*/}
+                <Grid item>
+                    <TextField id="meeting-id-input" label="Room Code" variant="standard" type={"text"} value={roomCode}
+                               onChange={(event) => {
+                                   // function called when input field is changed
+                                   setRoomCode(event.target.value);
+                               }}/>
+                </Grid>
+
+                {/*Button for joining a meeting after inputting the above information*/}
+                <Grid item>
+                    <Button variant="contained" type="submit" onClick={() => handleFormSubmission()}
+                            disabled={!validInputs()}>
+                        <Typography variant={'body1'}>JOIN</Typography>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Box>
+    );
+}
+
+export default HomePage;
 ```
 
 This is what web-app/src/component/VideoChatPage/index.jsx looks like:
 
 ```jsx
+import {Box, Button, FormGroup, Grid, TextField, Typography} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import qs from "qs";
+import {k_video_chat_route} from "../../App";
+import {k_name_search_param, k_room_code_search_param} from "../HomePage";
 
+// keep track of possible status for clients
+const k_connected_status = "connected";
+
+// video chatting page
+const VideoChatPage = () => {
+    // keep track of what the user's name and the room code
+    const [userName, setUserName] = useState('');
+    const [roomCode, setRoomCode] = useState('');
+
+    // keep track of video clients
+    const [clients, setClients] = useState({
+            'id1': {
+                socketId: 'id1',
+                name: 'user a',
+                status: k_connected_status
+            },
+            'id2': {
+                socketId: 'id2',
+                name: 'user b',
+                status: k_connected_status
+            },
+            'id3': {
+                socketId: 'id3',
+                name: 'user c',
+                status: k_connected_status
+            },
+            'id4': {
+                socketId: 'id4',
+                name: 'user d',
+                status: k_connected_status
+            },
+    });
+
+    // keep track of chat messages
+    const [chatMessages, setChatMessages] = useState([
+        {
+            guid: 'guid1',
+            socketId: 'id1',
+            message: 'message 1'
+        },
+        {
+            guid: 'guid2',
+            socketId: 'id2',
+            message: 'message 1'
+        },
+        {
+            guid: 'guid3',
+            socketId: 'id3',
+            message: 'message 1'
+        },
+    ]);
+
+    // get the search string, ex: "?name=deepak&room-code=abc123"
+    const { search } = useLocation();
+
+    // function to navigate between pages
+    const navigate = useNavigate();
+
+    // every time the search string changes (should happen only once), run this function
+    useEffect(() => {
+        // navigate to home if search params are empty
+        if (!search || search.length <= 0) {
+            navigate(k_video_chat_route);
+            return;
+        }
+
+        // remove the question mark present in the beginning of search params
+        const searchWithoutQuestionMark = search.substring(1);
+        const parsedSearch = qs.parse(searchWithoutQuestionMark);
+
+        // get the name of person and room code from search params
+        const nameFromSearch = parsedSearch[k_name_search_param];
+        const roomCodeFromSearch = parsedSearch[k_room_code_search_param];
+
+        // navigate to home if search params are not valid
+        if(!nameFromSearch || nameFromSearch.length <= 0 || !roomCodeFromSearch || roomCodeFromSearch.length <= 0) {
+            navigate(k_video_chat_route);
+            return;
+        }
+
+        // otherwise if everything is valid and we were able to get the search params, store these as variables
+        setUserName(nameFromSearch);
+        setRoomCode(roomCodeFromSearch);
+    }, [search]);
+
+    // render the page
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            <Grid container direction={"row"} spacing={0} sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%'
+            }}>
+                <VideoFeeds clients={clients} />
+                <Chat clients={clients} chatMessages={chatMessages} />
+            </Grid>
+        </Box>
+    );
+}
+
+const VideoFeeds = (props) => {
+    return(
+        <Grid item xs={9}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    bgcolor: 'background.default',
+                    color: 'text.primary'
+                }}
+            >
+                <div className="video-feeds-wrapper">
+                    {
+                        Object.keys(props.clients).map((clientId) => {
+                            const client = props.clients[clientId];
+
+                            if(client.status === k_connected_status) {
+                                return (
+                                    <div key={clientId} className="video-feed">{client.name}</div>
+                                );
+                            }
+                        })
+                    }
+                </div>
+            </Box>
+        </Grid>
+    );
+}
+
+const Chat = (props) => {
+    const [message, setMessage] = useState('');
+
+    // function to send a message
+    const sendMessage = (message) => {
+        // prevent empty message from being sent
+        if(message || message.trim().length > 0) {
+            alert(`TODO: send message ${message}`);
+        }
+    }
+
+    return(
+        <Grid item xs={3}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    bgcolor: 'background.darker',
+                    color: 'text.primary'
+                }}
+            >
+                {/*List of messages*/}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        justifyContent: 'flex-start',
+                        flexGrow: 1,
+                        width: '100%',
+                        color: 'text.primary',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'flex-start',
+                            flexGrow: 1,
+                            width: '100%',
+                            color: 'text.primary',
+                            // padding: '20px'
+                        }}
+                    >
+                        {
+                            props.chatMessages.map((chatMessage) => {
+                                const client = props.clients[chatMessage.socketId]
+
+                                return (
+                                    <Box
+                                        key={chatMessage.guid}
+                                        sx={{
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <Typography>Name: {client.name}</Typography>
+                                        <Typography>Message: {chatMessage.message}</Typography>
+                                        {/*grey horizontal line*/}
+                                        <Box sx={{
+                                            marginTop: '10px',
+                                            marginBottom: '10px',
+                                            width: '100%',
+                                            height: '2px',
+                                            bgcolor: '#6b6b6b'
+                                        }}/>
+                                    </Box>
+                                );
+                            })
+                        }
+                    </Box>
+                </Box>
+                {/*Input field form*/}
+                <FormGroup
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        color: 'text.primary',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexGrow: 0.1,
+                            width: '100%',
+                            color: 'text.primary',
+                            columnGap: '10px',
+                            padding: '10px'
+                        }}
+                    >
+                        <TextField id="message-input" label="Message" variant="standard" value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value);
+                            }} sx={{
+                                flexGrow: 1
+                            }}
+                        />
+                        <Button variant="contained" onClick={() => {sendMessage(message)}}>Send</Button>
+                    </Box>
+                </FormGroup>
+            </Box>
+        </Grid>
+    );
+}
+
+
+export default VideoChatPage;
 ```
 
 This is what index.css looks like:
 ```css
+/*body encapsulating page*/
+body {
+  margin: 0;
+  background: black;
+}
 
+/*react root*/
+#root {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/*grid layout for video feeds*/
+.video-feeds-wrapper {
+  width: 100%;
+  /*height: 100%;*/
+  display: grid;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  grid-template-columns: repeat(2, 45%);
+  grid-auto-flow: row;
+  justify-content: center;
+  align-items: center;
+  /*overflow: scroll;*/
+}
+
+.video-feed {
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
+  /*min-height: 300px;*/
+}
 ```
+
+Finally, here are the results!
+
+![Home Page](web-app/screenshots/part04-result-1.png)
+
+![Video Chat Page](web-app/screenshots/part04-result-2.png)
+
+<a name="part05"></a>
+## Part 05 - Getting Started with Backend
+
+WIP
