@@ -1,6 +1,11 @@
 import {Box, Button, Grid, TextField, Typography} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {createSearchParams, useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {k_video_chat_route} from "../../App";
+
+// constants to keep track of
+export const k_name_search_param = 'name';
+export const k_room_code_search_param = 'room-code';
 
 // landing page
 const HomePage = () => {
@@ -13,7 +18,19 @@ const HomePage = () => {
 
     // function called when clicking JOIN button
     const handleFormSubmission = () => {
-        alert('test');
+        // create the search params
+        // ex search params: "name=deepak&room-code=abc123" from http://localhost:3000/meet?name=deepak&room-code=abc123
+        const searchParms = createSearchParams([
+            [k_name_search_param, userName],
+            [k_room_code_search_param, roomCode]
+        ]);
+
+        // then navigate to this new url which has the user's name and their inputted room code
+        // ex url: http://localhost:3000/meet?name=deepak&room-code=abc123
+        navigate({
+            pathname: k_video_chat_route,
+            search: `?${searchParms}`,
+        });
     }
 
     // function to return true if input fields have valid input

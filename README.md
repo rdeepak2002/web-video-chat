@@ -446,6 +446,13 @@ After this, we will implement our mockup.
 
 We will also use some basic React code to have the Home Page navigate to the Video Chat Page and pass along the inputted data via the url. 
 
+We will also use the 'qs' library to parse data from the URL. Install it with the following commands:
+
+```shell
+cd web-app
+npm install qs --save
+```
+
 This is what web-app/src/App.js looks like:
 
 ```js
@@ -464,3 +471,7 @@ This is what web-app/src/component/VideoChatPage/index.jsx looks like:
 
 ```
 
+This is what index.css looks like:
+```css
+
+```
