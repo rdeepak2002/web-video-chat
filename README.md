@@ -1523,10 +1523,6 @@ const Chat = (props) => {
 export default VideoChatPage;
 ```
 
-TODO: talk about how to setup peer-server folder (install peer, etc.)
-
-TODO: talk about using react .env
-
-TODO: talk about PROCFILE and env vars
-
-TODO: chrome://flags/#unsafely-treat-insecure-origin-as-secure
+TODO for Development: talk about ngrok
+TODO for Deployment: talk about using react .env
+TODO for Deployment: talk about Procfile and env vars
