@@ -6,6 +6,7 @@ import {k_video_chat_route} from "../../App";
 import {k_name_search_param, k_room_code_search_param} from "../HomePage";
 import socketIOClient from "socket.io-client";
 import { v4 as uuidV4 } from 'uuid';
+import {Peer} from "peerjs/lib/peer";
 
 // TODO: update this to read value from environment variables
 const API_ENDPOINT = "http://localhost:8080";
