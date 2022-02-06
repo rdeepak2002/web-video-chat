@@ -16,6 +16,9 @@ const k_disconnected_status = "disconnected";
 
 // video chatting page
 const VideoChatPage = () => {
+    // reference to socket handler
+    const [socketHandler, setSocketHandler] = useState(undefined);
+
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
     const [roomCode, setRoomCode] = useState('');
@@ -138,6 +141,13 @@ const VideoChatPage = () => {
                 setClients(Object.assign({}, clientsCopy));
             });
 
+            socket.on("chat-message", data => {
+                console.log('chat message', data);
+                const chatMessagesCopy = chatMessages;
+                chatMessagesCopy.push(data);
+                setChatMessages([...chatMessagesCopy]);
+            });
+
             // join the socket room
             socket.emit("join-room", {
                 socketId: userId,
@@ -145,6 +155,9 @@ const VideoChatPage = () => {
                 name: userName,
                 status: k_connected_status
             });
+
+            // update socket handler variable so other parts of code can call this
+            setSocketHandler(socket);
 
             // disconnect the socket after this page closes
             return () => socket.disconnect();
@@ -173,7 +186,7 @@ const VideoChatPage = () => {
                 height: '100%'
             }}>
                 <VideoFeeds clients={clients} />
-                <Chat clients={clients} chatMessages={chatMessages} />
+                <Chat clients={clients} chatMessages={chatMessages} socketHandler={socketHandler} userId={userId}/>
             </Grid>
         </Box>
     );
@@ -219,7 +232,17 @@ const Chat = (props) => {
     const sendMessage = (message) => {
         // prevent empty message from being sent
         if(message || message.trim().length > 0) {
-            alert(`TODO: send message ${message}`);
+            if(props.socketHandler) {
+                // emit message to socket server
+                props.socketHandler.emit('chat-message', {
+                    guid: uuidV4(),
+                    socketId: props.userId,
+                    message: message
+                });
+
+                // clear text field after sending message
+                setMessage('');
+            }
         }
     }
 

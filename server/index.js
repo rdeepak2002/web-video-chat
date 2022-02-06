@@ -37,6 +37,10 @@ io.on('connection', socket => {
 
         socket.join(roomId);
         io.in(roomId).emit('new-user-connect', userData);
+        socket.on('chat-message', (chatData) => {
+            console.log('chat message');
+            io.to(roomId).emit('chat-message', chatData);
+        });
         socket.on('update', () => {
             console.log('user update');
             io.to(roomId).emit('user-update', userData);
