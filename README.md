@@ -971,6 +971,7 @@ npm install socket.io --save
 npm install uuid --save
 npm install nodemon --save-dev
 npm install peer --save
+npm install -g peer
 ```
 
 Notes:
@@ -1074,3 +1075,5 @@ This is what web-app/src/component/VideoChatPage/index.jsx looks like now:
 ```jsx
 
 ```
+
+TODO: also show updated server code with peer server

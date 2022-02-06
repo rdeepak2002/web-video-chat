@@ -6,7 +6,7 @@ import {k_video_chat_route} from "../../App";
 import {k_name_search_param, k_room_code_search_param} from "../HomePage";
 import socketIOClient from "socket.io-client";
 import { v4 as uuidV4 } from 'uuid';
-import {Peer} from "peerjs/lib/peer";
+import Peer from "peerjs";
 
 // TODO: update this to read value from environment variables
 const API_ENDPOINT = "http://localhost:8080";
@@ -19,6 +19,9 @@ const k_disconnected_status = "disconnected";
 const VideoChatPage = () => {
     // reference to socket handler
     const [socketHandler, setSocketHandler] = useState(undefined);
+
+    // keep track of peer connections
+    const [myPeer, setMyPeer] = useState(undefined);
 
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
@@ -109,6 +112,15 @@ const VideoChatPage = () => {
     useEffect(() => {
         // check whether roomCode and userName are valid
         if(roomCode && userName && roomCode.trim().length > 0 && userName.trim().length > 0) {
+            // create peer connection
+            const peer = new Peer(userId, {
+                host: 'localhost',
+                port: 8081,
+                path: '/peerjs'
+            });
+
+            setMyPeer(peer);
+
             // create socket connection
             const socket = socketIOClient(API_ENDPOINT);
 
@@ -133,6 +145,26 @@ const VideoChatPage = () => {
                 clientsCopy[socketId] = data;
                 console.log('user update')
                 setClients(Object.assign({}, clientsCopy));
+
+                // dont allow user to connect to themself
+                if(socketId !== userId) {
+                    // setting up peer connection
+                    const conn = peer.connect(socketId);
+
+                    console.log('peer connection', conn);
+
+                    conn.on('open', function() {
+                        console.log('got peer message');
+
+                        // Receive messages
+                        conn.on('data', function(data) {
+                            console.log('Received', data);
+                        });
+
+                        // Send messages
+                        conn.send('Hello!');
+                    });
+                }
             });
 
             socket.on("user-disconnected", data => {
@@ -161,7 +193,10 @@ const VideoChatPage = () => {
             setSocketHandler(socket);
 
             // disconnect the socket after this page closes
-            return () => socket.disconnect();
+            return () => {
+                socket.disconnect();
+                peer.disconnect();
+            };
         }
     }, [userName, roomCode]);
 
@@ -215,7 +250,10 @@ const VideoFeeds = (props) => {
 
                             if(client.status === k_connected_status) {
                                 return (
-                                    <div key={clientId} className="video-feed">{client.name}</div>
+                                    <div key={clientId} className="video-feed">
+                                        <Typography>{client.name}</Typography>
+                                        <Typography>{clientId}</Typography>
+                                    </div>
                                 );
                             }
                         })

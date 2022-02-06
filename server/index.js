@@ -10,7 +10,7 @@ const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
 
 const app = express();
 const server = http.createServer(app);
-const peerServer = new PeerServer({port: 443, path: '/peerjs'});
+// const peerServer = new PeerServer({port: 8081, path: '/peerjs'});
 const io = new Server(server,{
     cors: {
         origin: CORS_ORIGIN
