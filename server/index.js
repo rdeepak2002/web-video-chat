@@ -4,19 +4,25 @@ import http from 'http';
 import {Server} from 'socket.io';
 
 const port = process.env.PORT || 8080;
-const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
+// const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
+
+// console.log('cors origin', CORS_ORIGIN);
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server,{
     cors: {
-        origin: CORS_ORIGIN
+        origins: "*:*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["content-type"],
+        pingTimeout: 7000,
+        pingInterval: 3000
     }
 });
 
 // Middlewares
 app.use(cors({
-    origin: CORS_ORIGIN
+    origin: "*"
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +42,10 @@ io.on('connection', socket => {
 
         socket.join(roomId);
         io.in(roomId).emit('new-user-connect', userData);
+        socket.on('peer-id-offer', (peerIdData) => {
+            console.log('peer-id-offer');
+            socket.to(roomId).emit('peer-id-received', peerIdData);
+        });
         socket.on('chat-message', (chatData) => {
             console.log('chat message');
             io.to(roomId).emit('chat-message', chatData);
