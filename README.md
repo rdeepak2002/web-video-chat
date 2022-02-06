@@ -970,6 +970,7 @@ npm install server --save
 npm install socket.io --save
 npm install uuid --save
 npm install nodemon --save-dev
+npm install peer --save
 ```
 
 Notes:
