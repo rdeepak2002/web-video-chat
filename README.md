@@ -928,4 +928,148 @@ Finally, here are the results!
 <a name="part05"></a>
 ## Part 05 - Getting Started with Backend
 
-WIP
+Note a lot of the code will come from this tutorial: https://dev.to/arjhun777/video-chatting-and-screen-sharing-with-react-node-webrtc-peerjs-18fg
+
+Update package.json file in the server folder (not web-app folder) by setting "type" to "module" and modifying the start script:
+
+Example of mine (look at last line where I do "type": "module" and where I do "start": "nodemon index.js"):
+
+```json
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "start-prod": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "server": "^1.0.37",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "type": "module"
+}
+```
+
+In the server folder (not web-app folder), we will need to install some libraries:
+
+```shell
+cd server
+npm install express --save
+npm install cors --save
+npm install server --save
+npm install socket.io --save
+npm install uuid --save
+npm install nodemon --save-dev
+```
+
+Notes:
+- express is a framework for creating NodeJS servers
+- socket.io is a framework for websockets
+- uuid is a framework to generate unique ids
+- nodemon is a tool that automatically restarts our server every time changes are made to the code
+
+In the server folder (not web-app folder), create a new file called "index.js" and add the following content:
+
+```js
+import express from 'express';
+import cors from 'cors';
+import http from 'http';
+import {Server} from 'socket.io';
+import { v4 as uuidV4 } from 'uuid';
+
+const port = process.env.PORT || 8080;
+const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server,{
+  cors: {
+    origin: CORS_ORIGIN
+  }
+});
+
+// Middlewares
+app.use(cors({
+  origin: CORS_ORIGIN
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// example of a HTTP endpoint (useful if you do db stuff later like saving messages and custom auth):
+// app.get('/join', (req, res) => {
+//     res.send({ link: uuidV4() });
+// });
+
+io.on('connection', socket => {
+  console.log('user connected');
+
+  socket.on('join-room', (userData) => {
+    const { socketId, roomId, name, status } = userData;
+
+    console.log(`user joined ${roomId}`, userData);
+
+    socket.join(roomId);
+    io.in(roomId).emit('new-user-connect', userData);
+    socket.on('update', () => {
+      console.log('user update');
+      io.to(roomId).emit('user-update', userData);
+    });
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+      io.in(roomId).emit('user-disconnected', userData);
+    });
+    socket.on('broadcast-message', (message) => {
+      io.in(roomId).emit('new-broadcast-messsage', {...message, userData});
+    });
+    // socket.on('reconnect-user', () => {
+    //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
+    // });
+    socket.on('display-media', (value) => {
+      io.in(roomId).emit('display-media', {socketId, value });
+    });
+    socket.on('user-video-off', (value) => {
+      io.in(roomId).emit('user-video-off', value);
+    });
+  });
+});
+
+// Server listen initilized
+server.listen(port, () => {
+  console.log(`Listening on the port ${port}`);
+}).on('error', e => {
+  console.error(e);
+});
+```
+
+Run the app and make sure everything is working:
+```shell
+cd server
+npm run start
+```
+
+Now, we need to add support for sockets and peer connections in our React App, so install the following:
+
+```shell
+cd web-app
+npm install socket.io-client --save
+npm install peerjs --save
+npm install uuid --save
+```
+
+Now, we need to add the necessary connection code to our video chat page.
+
+This is what web-app/src/component/VideoChatPage/index.jsx looks like now:
+
+```jsx
+
+```

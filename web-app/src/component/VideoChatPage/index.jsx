@@ -4,57 +4,68 @@ import {useLocation, useNavigate} from "react-router-dom";
 import qs from "qs";
 import {k_video_chat_route} from "../../App";
 import {k_name_search_param, k_room_code_search_param} from "../HomePage";
+import socketIOClient from "socket.io-client";
+import { v4 as uuidV4 } from 'uuid';
+
+// TODO: update this to read value from environment variables
+const API_ENDPOINT = "http://localhost:8080";
 
 // keep track of possible status for clients
 const k_connected_status = "connected";
+const k_disconnected_status = "disconnected";
 
 // video chatting page
 const VideoChatPage = () => {
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
     const [roomCode, setRoomCode] = useState('');
+    const [userId, setUserId] = useState(`${uuidV4()}`);
 
     // keep track of video clients
     const [clients, setClients] = useState({
-            'id1': {
-                socketId: 'id1',
-                name: 'user a',
-                status: k_connected_status
-            },
-            'id2': {
-                socketId: 'id2',
-                name: 'user b',
-                status: k_connected_status
-            },
-            'id3': {
-                socketId: 'id3',
-                name: 'user c',
-                status: k_connected_status
-            },
-            'id4': {
-                socketId: 'id4',
-                name: 'user d',
-                status: k_connected_status
-            },
+            // 'id1': {
+            //     socketId: 'id1',
+            //     roomId: 'testval',
+            //     name: 'user a',
+            //     status: k_connected_status
+            // },
+            // 'id2': {
+            //     socketId: 'id2',
+            //     roomId: 'testval',
+            //     name: 'user b',
+            //     status: k_connected_status
+            // },
+            // 'id3': {
+            //     socketId: 'id3',
+            //     roomId: 'testval',
+            //     name: 'user c',
+            //     status: k_connected_status
+            // },
+            // 'id4': {
+            //     socketId: 'id4',
+            //     roomId: 'testval',
+            //     name: 'user d',
+            //     status: k_connected_status
+            // },
     });
 
     // keep track of chat messages
     const [chatMessages, setChatMessages] = useState([
-        {
-            guid: 'guid1',
-            socketId: 'id1',
-            message: 'message 1'
-        },
-        {
-            guid: 'guid2',
-            socketId: 'id2',
-            message: 'message 1'
-        },
-        {
-            guid: 'guid3',
-            socketId: 'id3',
-            message: 'message 1'
-        },
+        // {
+        //     guid: 'guid1',
+        //     socketId: 'id1',
+        //     message: 'message 1'
+        // },
+        // {
+        //     guid: 'guid2',
+        //     socketId: 'id2',
+        //     message: 'message 1'
+        // },
+        // {
+        //     guid: 'guid3',
+        //     socketId: 'id3',
+        //     message: 'message 1'
+        // },
     ]);
 
     // get the search string, ex: "?name=deepak&room-code=abc123"
@@ -89,6 +100,56 @@ const VideoChatPage = () => {
         setUserName(nameFromSearch);
         setRoomCode(roomCodeFromSearch);
     }, [search]);
+
+    // create connection to socket client
+    useEffect(() => {
+        // check whether roomCode and userName are valid
+        if(roomCode && userName && roomCode.trim().length > 0 && userName.trim().length > 0) {
+            // create socket connection
+            const socket = socketIOClient(API_ENDPOINT);
+
+            socket.on("new-user-connect", data => {
+                const socketId = data.socketId;
+                const clientsCopy = clients;
+                clientsCopy[socketId] = data;
+                setClients(Object.assign({}, clientsCopy));
+
+                // tell all other users this user has 'updated'
+                socket.emit("update", {
+                    socketId: userId,
+                    roomId: roomCode,
+                    name: userName,
+                    status: k_connected_status
+                });
+            });
+
+            socket.on("user-update", data => {
+                const socketId = data.socketId;
+                const clientsCopy = clients;
+                clientsCopy[socketId] = data;
+                console.log('user update')
+                setClients(Object.assign({}, clientsCopy));
+            });
+
+            socket.on("user-disconnected", data => {
+                const socketId = data.socketId;
+                const clientsCopy = clients;
+                clientsCopy[socketId].status = k_disconnected_status
+                setClients(Object.assign({}, clientsCopy));
+            });
+
+            // join the socket room
+            socket.emit("join-room", {
+                socketId: userId,
+                roomId: roomCode,
+                name: userName,
+                status: k_connected_status
+            });
+
+            // disconnect the socket after this page closes
+            return () => socket.disconnect();
+        }
+    }, [userName, roomCode]);
 
     // render the page
     return (
