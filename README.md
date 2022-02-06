@@ -987,7 +987,6 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import {Server} from 'socket.io';
-import { v4 as uuidV4 } from 'uuid';
 
 const port = process.env.PORT || 8080;
 const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
@@ -1022,6 +1021,10 @@ io.on('connection', socket => {
 
     socket.join(roomId);
     io.in(roomId).emit('new-user-connect', userData);
+    socket.on('chat-message', (chatData) => {
+      console.log('chat message');
+      io.to(roomId).emit('chat-message', chatData);
+    });
     socket.on('update', () => {
       console.log('user update');
       io.to(roomId).emit('user-update', userData);

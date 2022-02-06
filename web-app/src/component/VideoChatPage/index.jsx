@@ -41,24 +41,6 @@ const VideoChatPage = () => {
             //     name: 'user a',
             //     status: k_connected_status
             // },
-            // 'id2': {
-            //     socketId: 'id2',
-            //     roomId: 'testval',
-            //     name: 'user b',
-            //     status: k_connected_status
-            // },
-            // 'id3': {
-            //     socketId: 'id3',
-            //     roomId: 'testval',
-            //     name: 'user c',
-            //     status: k_connected_status
-            // },
-            // 'id4': {
-            //     socketId: 'id4',
-            //     roomId: 'testval',
-            //     name: 'user d',
-            //     status: k_connected_status
-            // },
     });
 
     // keep track of chat messages
@@ -68,16 +50,6 @@ const VideoChatPage = () => {
         //     socketId: 'id1',
         //     message: 'message 1'
         // },
-        // {
-        //     guid: 'guid2',
-        //     socketId: 'id2',
-        //     message: 'message 1'
-        // },
-        // {
-        //     guid: 'guid3',
-        //     socketId: 'id3',
-        //     message: 'message 1'
-        // },
     ]);
 
     // get the search string, ex: "?name=deepak&room-code=abc123"
@@ -85,12 +57,6 @@ const VideoChatPage = () => {
 
     // function to navigate between pages
     const navigate = useNavigate();
-
-    const [mediaStream, setMediaStream] = useState(undefined);
-
-    useEffect(() => {
-
-    }, []);
 
     // every time the search string changes (should happen only once), run this function
     useEffect(() => {
@@ -143,10 +109,6 @@ const VideoChatPage = () => {
             // create peer connection
             const peer = new Peer(userId, PEER_SERVER_OPTIONS);
 
-            peer.on('connection', function(conn) {
-                console.log('peer connected to us', conn);
-            });
-
             peer.on('call', function(call) {
                 console.log('answering call', call);
                 // Answer the call, providing our mediaStream
@@ -180,39 +142,15 @@ const VideoChatPage = () => {
 
                 // dont allow user to connect to themself
                 if(socketId !== userId) {
-                    // setting up peer connection
-                    const conn = peer.connect(socketId);
-
-                    // console.log('peer connection', conn);
-
-                    conn.on('open', function() {
-                        // console.log('peer opened', conn);
-
-                        // Receive messages
-                        conn.on('data', function(data) {
-                            console.log('Received', data);
-                        });
-
-                        // Send messages
-                        conn.send('Hello!');
-                    });
-
-                    console.log('current media stream', mediaStream);
-
+                    // call other peer
                     const call = peer.call(socketId, mediaStream);
-
-                    // console.log('setup call', call);
 
                     call.on('stream', function(stream) {
                         // `stream` is the MediaStream of the remote peer.
                         // Here you'd add it to an HTML video/canvas element.
-                        // console.log('video stream received', stream);
-                        // myVideoRef.current[socketId] = stream;
-
                         let video = myVideoRef.current[socketId];
                         video.srcObject = stream;
                         video.play();
-                        // mediaStream = stream;
                     });
                 }
             });
