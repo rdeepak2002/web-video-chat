@@ -1523,6 +1523,9 @@ const Chat = (props) => {
 export default VideoChatPage;
 ```
 
+Note for Chrome users:
+- If things do not work, try disabling "Anonymize local IPs exposed by WebRTC" in chrome://flags/
+
 TODO for Development: talk about ngrok
 TODO for Deployment: talk about using react .env
 TODO for Deployment: talk about Procfile and env vars
