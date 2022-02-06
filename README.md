@@ -1465,3 +1465,5 @@ TODO: talk about how to setup peer-server folder (install peer, etc.)
 TODO: talk about using react .env
 
 TODO: talk about PROCFILE and env vars
+
+TODO: chrome://flags/#unsafely-treat-insecure-origin-as-secure
