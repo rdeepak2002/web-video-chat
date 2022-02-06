@@ -10,6 +10,11 @@ import Peer from "peerjs";
 
 // TODO: update this to read value from environment variables
 const API_ENDPOINT = "http://localhost:8080";
+const PEER_SERVER_OPTIONS = {
+    host: 'localhost',
+    port: 8081,
+    path: '/peerjs'
+};
 
 // keep track of possible status for clients
 const k_connected_status = "connected";
@@ -136,11 +141,7 @@ const VideoChatPage = () => {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true })
 
             // create peer connection
-            const peer = new Peer(userId, {
-                host: 'localhost',
-                port: 8081,
-                path: '/peerjs'
-            });
+            const peer = new Peer(userId, PEER_SERVER_OPTIONS);
 
             peer.on('connection', function(conn) {
                 console.log('peer connected to us', conn);
