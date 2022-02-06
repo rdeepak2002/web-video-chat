@@ -1,5 +1,5 @@
 import {Box, Button, FormGroup, Grid, TextField, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {createRef, useEffect, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import qs from "qs";
 import {k_video_chat_route} from "../../App";
@@ -22,6 +22,8 @@ const VideoChatPage = () => {
 
     // keep track of peer connections
     const [myPeer, setMyPeer] = useState(undefined);
+
+    const myVideoRef = useRef(null);
 
     // keep track of what the user's name and the room code
     const [userName, setUserName] = useState('');
@@ -81,6 +83,20 @@ const VideoChatPage = () => {
     // function to navigate between pages
     const navigate = useNavigate();
 
+    // get user's video
+    useEffect(() => {
+        navigator.mediaDevices
+            .getUserMedia({ video: { width: 300 } })
+            .then(stream => {
+                let video = myVideoRef.current;
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => {
+                console.error("error:", err);
+            });
+    }, [myVideoRef])
+
     // every time the search string changes (should happen only once), run this function
     useEffect(() => {
         // navigate to home if search params are empty
@@ -123,6 +139,10 @@ const VideoChatPage = () => {
                 console.log('peer connected to us', conn);
             });
 
+            // TODO: implement peer.call
+            // TODO: implement peer.call
+            // TODO: implement peer.call
+            // https://peerjs.com/docs.html#start
 
             setMyPeer(peer);
 
@@ -226,7 +246,7 @@ const VideoChatPage = () => {
                 width: '100%',
                 height: '100%'
             }}>
-                <VideoFeeds clients={clients} />
+                <VideoFeeds clients={clients} myVideoRef={myVideoRef} />
                 <Chat clients={clients} chatMessages={chatMessages} socketHandler={socketHandler} userId={userId}/>
             </Grid>
         </Box>
@@ -263,6 +283,10 @@ const VideoFeeds = (props) => {
                             }
                         })
                     }
+                    <div className="video-feed">
+                        <Typography>{'You'}</Typography>
+                        <video ref={props.myVideoRef} />
+                    </div>
                 </div>
             </Box>
         </Grid>
