@@ -2,15 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import {Server} from 'socket.io';
-import { v4 as uuidV4 } from 'uuid';
-import {PeerServer} from "peer";
 
 const port = process.env.PORT || 8080;
 const CORS_ORIGIN = process.env.WEB_APP_ORIGIN || 'http://localhost:3000';
 
 const app = express();
 const server = http.createServer(app);
-// const peerServer = new PeerServer({port: 8081, path: '/peerjs'});
 const io = new Server(server,{
     cors: {
         origin: CORS_ORIGIN
