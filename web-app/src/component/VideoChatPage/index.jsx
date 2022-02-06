@@ -9,11 +9,11 @@ import { v4 as uuidV4 } from 'uuid';
 import Peer from "peerjs";
 
 // TODO: update this to read value from environment variables
-const API_ENDPOINT = "http://localhost:8080";
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 const PEER_SERVER_OPTIONS = {
-    host: 'localhost',
-    port: 8081,
-    path: '/peerjs'
+    host: process.env.REACT_APP_PEER_HOST,
+    port: parseInt(process.env.REACT_APP_PEER_PORT || '80'),
+    path: process.env.REACT_APP_PEER_PATH
 };
 
 // keep track of possible status for clients
