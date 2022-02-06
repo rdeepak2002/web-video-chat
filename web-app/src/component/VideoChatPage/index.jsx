@@ -81,6 +81,12 @@ const VideoChatPage = () => {
     // function to navigate between pages
     const navigate = useNavigate();
 
+    const [mediaStream, setMediaStream] = useState(undefined);
+
+    useEffect(() => {
+
+    }, []);
+
     // every time the search string changes (should happen only once), run this function
     useEffect(() => {
         // navigate to home if search params are empty
@@ -108,32 +114,26 @@ const VideoChatPage = () => {
         setRoomCode(roomCodeFromSearch);
     }, [search]);
 
+    // set user's own video
+    useEffect(() => {
+        const myVidRef = myVideoRef.current[userId];
+
+        if(myVideoRef) {
+            navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true }).then(mediaStream => {
+                myVidRef.srcObject = mediaStream;
+                myVidRef.muted = true;
+                myVidRef.play();
+            })
+        }
+    }, [myVideoRef.current[userId]]);
+
     // create connection to socket client
     useEffect( async () => {
         // check whether roomCode and userName are valid
         console.log(myVideoRef.current);
         if(roomCode && userName && roomCode.trim().length > 0 && userName.trim().length > 0) {
-            // get user's video
+            // get user's video (to send to other clients)
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 300 }, audio: true })
-
-            let video = myVideoRef.current[userId];
-            if(video) {
-                video.srcObject = mediaStream;
-                video.muted = true;
-                video.play();
-            }
-
-            // navigator.mediaDevices
-            //     .getUserMedia({ video: { width: 300 } })
-            //     .then(stream => {
-            //         let video = myVideoRef.current[userId];
-            //         video.srcObject = stream;
-            //         video.play();
-            //         mediaStream = stream;
-            //     })
-            //     .catch(err => {
-            //         console.error("error:", err);
-            //     });
 
             // create peer connection
             const peer = new Peer(userId, {
