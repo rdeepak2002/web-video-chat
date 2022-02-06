@@ -311,4 +311,131 @@ Good job, you set up routing on your website!
 <a name="part04"></a>
 ## Part 04 - Implementing our Mockup
 
-WIP
+To start implementing our Mockup (https://www.figma.com/file/MXK5OCYonbfN5staFvhB13/Video-Chat?node-id=0%3A1), we will first install a UI library.
+
+UI libraries make it easier to develop since we do not have to write our own custom CSS.
+
+Popular UI libraries include Bootstrap (https://getbootstrap.com/) and Material UI (https://mui.com/)
+
+For this tutorial, I will be using Material UI. To install, it run the following terminal command in the web-app folder.
+
+```shell
+cd web-app
+npm install @mui/material @emotion/react @emotion/styled --save
+```
+
+First, we will fix some of the CSS (styling) for our webpage. Replace web-app/src/index.css with the following:
+
+```css
+body {
+  margin: 0;
+  background: black;
+}
+
+#root {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+```
+
+This will make our webpage take up the entire width and height of the screen.
+
+Then, we will add a Material UI Theme to our application. This will make it so that coloring and styles can be consistent throughout our app. We can even setup a system to switch between dark mode and light mode. 
+
+Modify web-app/src/App.js to wrap the entire application with a ThemeProvider component:
+
+```js
+import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import VideoChatPage from "./component/VideoChatPage";
+import HomePage from "./component/HomePage";
+import {createTheme, ThemeProvider} from "@mui/material";
+import {green, purple} from "@mui/material/colors";
+
+export const k_home_route = "/home";
+export const k_video_chat_route = "/meet";
+
+const theme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: purple[500],
+        },
+        secondary: {
+            main: green[500],
+        },
+    },
+});
+
+const App = () => {
+    return (
+        <Router>
+            <ThemeProvider theme={theme}>
+                {/* A <Switch> looks through its children <Route>s and
+                renders the first one that matches the current URL. */}
+                <Routes>
+                    <Route path={k_home_route} element={<HomePage/>}/>
+                    <Route path={k_video_chat_route} element={<VideoChatPage/>}/>
+                    <Route path="*" element={<Navigate to={k_home_route}/>}/>
+                </Routes>
+            </ThemeProvider>
+        </Router>
+    );
+}
+
+export default App;
+```
+
+Modify web-app/src/component/HomePage/index.jsx to use this theme:
+
+```jsx
+import {Box, Typography} from "@mui/material";
+
+const HomePage = () => {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            <Typography>Home Page</Typography>
+        </Box>
+    );
+}
+
+export default HomePage;
+```
+
+Modify web-app/src/component/VideoChatPage/index.jsx to use this theme:
+```jsx
+import {Box, Typography} from "@mui/material";
+
+const VideoChatPage = () => {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            <Typography>Video Chat Page</Typography>
+        </Box>
+    );
+}
+
+export default VideoChatPage;
+```
+

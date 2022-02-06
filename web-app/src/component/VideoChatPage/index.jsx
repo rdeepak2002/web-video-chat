@@ -1,8 +1,20 @@
+import {Box, Typography} from "@mui/material";
+
 const VideoChatPage = () => {
     return (
-        <div>
-            Hello world from video chat page
-        </div>
+        <Box
+            sx={{
+                display: 'flex',
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'background.default',
+                color: 'text.primary'
+            }}
+        >
+            <Typography>Video Chat Page</Typography>
+        </Box>
     );
 }
 
