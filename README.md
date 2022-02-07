@@ -978,7 +978,7 @@ Notes:
 - uuid is a framework to generate unique ids
 - nodemon is a tool that automatically restarts our server every time changes are made to the code
 
-In the server folder (not web-app folder), create a new file called "index.js" and add the following content: *refer to final code in this repo*
+In the server folder (not web-app folder), create a new file called "index.js" and add the following content: https://github.com/rdeepak2002/web-video-chat/blob/main/server/index.js
 
 Run the app and make sure everything is working:
 ```shell
@@ -997,7 +997,7 @@ npm install uuid --save
 
 Now, we need to add the necessary connection code to our video chat page.
 
-This is what web-app/src/component/VideoChatPage/index.jsx looks like now: *refer to final code in this repo*
+This is what web-app/src/component/VideoChatPage/index.jsx looks like now: https://github.com/rdeepak2002/web-video-chat/blob/main/web-app/src/component/VideoChatPage/index.jsx
 
 Note for Chrome users:
 - If things do not work, try disabling "Anonymize local IPs exposed by WebRTC" in chrome://flags/
