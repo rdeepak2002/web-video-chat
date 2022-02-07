@@ -928,8 +928,6 @@ Finally, here are the results!
 <a name="part05"></a>
 ## Part 05 - Backend
 
-Note a lot of the code will come from this tutorial: https://dev.to/arjhun777/video-chatting-and-screen-sharing-with-react-node-webrtc-peerjs-18fg
-
 Update package.json file in the server folder (not web-app folder) by setting "type" to "module" and modifying the start script:
 
 Example of mine (look at last line where I do "type": "module" and where I do "start": "nodemon index.js"):
