@@ -40,6 +40,7 @@ io.on('connection', socket => {
 
         console.log(`user joined ${roomId}`, userData);
 
+        // make this particular socket join the roomId passed in using the socket.io join() function
         socket.join(roomId);
         
         // inform all other users you have connected
