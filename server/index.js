@@ -58,18 +58,18 @@ io.on('connection', socket => {
             console.log('user disconnected');
             io.in(roomId).emit('user-disconnected', userData);
         });
-        socket.on('broadcast-message', (message) => {
-            io.in(roomId).emit('new-broadcast-messsage', {...message, userData});
-        });
+//         socket.on('broadcast-message', (message) => {
+//             io.in(roomId).emit('new-broadcast-messsage', {...message, userData});
+//         });
         // socket.on('reconnect-user', () => {
         //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
         // });
-        socket.on('display-media', (value) => {
-            io.in(roomId).emit('display-media', {socketId, value });
-        });
-        socket.on('user-video-off', (value) => {
-            io.in(roomId).emit('user-video-off', value);
-        });
+//         socket.on('display-media', (value) => {
+//             io.in(roomId).emit('display-media', {socketId, value });
+//         });
+//         socket.on('user-video-off', (value) => {
+//             io.in(roomId).emit('user-video-off', value);
+//         });
     });
 });
 
